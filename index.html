@@ -6,111 +6,170 @@
 <title>SMILE AI GROUP | AI-driven Co-Growth Platform</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #0b0e14;
-  color: #fff;
+:root{
+  --bg:#0b0e14;
+  --card:#141824;
+  --txt:#ffffff;
+  --muted:#b5b8c5;
+  --accent:#d4af37;
+  --line:#2a2f45;
+  --radius:16px;
 }
-.container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 40px 20px;
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--txt);
 }
-h1 {
-  font-size: 32px;
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:40px 20px 80px;
 }
-.card {
-  background: #141824;
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 20px;
+h1{margin:0 0 8px;font-size:34px;}
+h2{margin:0 0 12px;}
+h3{margin:0 0 10px;}
+p{color:var(--muted);line-height:1.6;}
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:28px;
+  margin-bottom:24px;
 }
-.btn {
-  padding: 14px 22px;
-  border-radius: 12px;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
+.btn-group{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:16px;
 }
-.btn-primary {
-  background: #d4af37;
-  color: #000;
-  font-weight: bold;
+button{
+  border:none;
+  border-radius:12px;
+  padding:14px 22px;
+  font-size:15px;
+  cursor:pointer;
 }
-.btn-secondary {
-  background: #2a2f45;
-  color: #fff;
+.primary{
+  background:var(--accent);
+  color:#000;
+  font-weight:700;
 }
-.btn-group {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+.secondary{
+  background:var(--line);
+  color:#fff;
 }
-footer {
-  text-align: center;
-  font-size: 13px;
-  color: #aaa;
-  margin-top: 40px;
+ul{padding-left:18px;}
+li{margin-bottom:6px;color:var(--muted);}
+.faq details{
+  background:#10141f;
+  border-radius:12px;
+  padding:14px 18px;
+  margin-bottom:10px;
+}
+.faq summary{
+  cursor:pointer;
+  font-weight:600;
+}
+footer{
+  text-align:center;
+  color:#8e92a3;
+  font-size:12px;
+  margin-top:40px;
 }
 </style>
 </head>
 
 <body>
-
 <div class="container">
-  <h1>SMILE AI GROUP</h1>
-  <p>AI-driven Co-Growth Platform</p>
 
-  <div class="card">
-    <h2>AI가 운영하고, 회원이 함께 성장하는 플랫폼</h2>
-    <p>
-      SMILE AI GROUP은 AI 자동 운영 · 5:5 동반 분배 규칙 · CORE 참여 증명을
-      기반으로 설계된 플랫폼입니다.
-    </p>
+<!-- HERO -->
+<h1>SMILE AI GROUP</h1>
+<p>AI-driven Co-Growth Platform</p>
 
-    <div class="btn-group">
-      <button class="btn btn-primary" onclick="openJoin()">참여 시작하기</button>
-      <button class="btn btn-secondary" onclick="openContact()">문의하기</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>CORE 구조</h3>
-    <ul>
-      <li>1 CORE = 100 USDT (초기 기준)</li>
-      <li>총 발행량: 1,000,000 CORE (영구 고정)</li>
-      <li>CORE는 코인이 아닌 참여 증명 단위</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h3>5 : 5 동반 분배 규칙</h3>
-    <ul>
-      <li>회사 50% / 회원 50%</li>
-      <li>일일 배당 구조: USDT : SP = 5 : 5</li>
-      <li>SP는 서비스 사용 · 수익 · 재분배로 순환</li>
-    </ul>
+<div class="card">
+  <h2>AI가 운영하고, 회원이 함께 성장하는 플랫폼</h2>
+  <p>
+    SMILE AI GROUP은 AI 자동 운영, 5:5 동반 분배 규칙,
+    CORE 참여 증명을 기반으로 설계된 플랫폼입니다.
+  </p>
+  <div class="btn-group">
+    <button class="primary" onclick="openJoin()">참여 시작하기</button>
+    <button class="secondary" onclick="openContact()">문의하기</button>
   </div>
 </div>
 
+<!-- CORE -->
+<div class="card">
+  <h3>CORE 구조</h3>
+  <ul>
+    <li>1 CORE = 100 USDT (초기 기준)</li>
+    <li>총 발행량: 1,000,000 CORE (영구 고정)</li>
+    <li>CORE는 코인이 아닌 참여 증명 단위</li>
+  </ul>
+</div>
+
+<!-- 5:5 -->
+<div class="card">
+  <h3>5 : 5 동반 분배 규칙</h3>
+  <ul>
+    <li>회사 50% / 회원 50%</li>
+    <li>일일 배당 구조: USDT : SP = 5 : 5</li>
+    <li>SP는 서비스 사용 · 수익 · 재분배로 순환</li>
+  </ul>
+</div>
+
+<!-- FAQ -->
+<div class="card faq">
+  <h3>자주 묻는 질문</h3>
+
+  <details>
+    <summary>CORE는 코인인가요?</summary>
+    <p>아닙니다. CORE는 참여 증명(Participation Proof) 단위입니다.</p>
+  </details>
+
+  <details>
+    <summary>5:5 규칙은 변경되나요?</summary>
+    <p>아니요. 운영 헌법으로 고정되어 변경되지 않습니다.</p>
+  </details>
+
+  <details>
+    <summary>SP는 왜 필요한가요?</summary>
+    <p>SP는 서비스 사용, 수익 분배, 재투자를 위한 순환 포인트입니다.</p>
+  </details>
+</div>
+
+<!-- JOIN / CONTACT -->
+<div class="card">
+  <h3>참여 / 문의</h3>
+  <p>
+    단기 수익이 아닌 구조 이해를 통한 동반 성장을 지향합니다.
+  </p>
+  <div class="btn-group">
+    <button class="primary" onclick="openJoin()">참여 시작하기</button>
+    <button class="secondary" onclick="openContact()">문의하기</button>
+  </div>
+  <ul>
+    <li>대표: CHOI MYUNGSUNG</li>
+    <li>총괄 AI: KAIO</li>
+    <li>운영 원칙: 투명 · 공개 · 신뢰 · 5:5 동반 분배</li>
+  </ul>
+</div>
+
 <footer>
-  CORE Supply: 1,000,000 (Fixed) · Distribution Rule: 5:5<br />
-  On-chain Direction: Web3 / Decentralized<br />
-  © SMILE AI GROUP. All rights reserved.
+CORE Supply: 1,000,000 (Fixed) · Distribution Rule: 5:5<br>
+On-chain Direction: Web3 / Decentralized<br>
+© SMILE AI GROUP. All rights reserved.
 </footer>
 
-<script>
-// 🔗 카카오 오픈채팅 링크 (PC/모바일 공통)
-function openContact() {
-  window.open("https://open.kakao.com/o/gmxZ6y6h", "_blank");
-}
+</div>
 
-function openJoin() {
-  alert(
-    "현재는 소개 및 문의 단계입니다.\n\n" +
-    "아래 ‘문의하기’를 통해 카카오 오픈채팅으로 문의해 주세요."
-  );
+<script>
+function openContact(){
+  window.open("https://open.kakao.com/o/gmxZ6y6h","_blank");
+}
+function openJoin(){
+  window.open("https://open.kakao.com/o/gmxZ6y6h","_blank");
 }
 </script>
 
