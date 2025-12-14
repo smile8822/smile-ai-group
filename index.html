@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMILE AI GROUP | AI-driven Co-Growth Platform</title>
+
+  <style>
+    :root {
+      --bg: #0f1720;
+      --card: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.12);
+      --text: #e6edf3;
+      --muted: #9aa4af;
+      --accent: #f59e0b;
+      --accent-hover: #fbbf24;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -200px, #1f2937, var(--bg));
+      color: var(--text);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ===== Header ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(12px);
+      background: rgba(15,23,32,0.7);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    .brand img {
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .cta {
+      background: var(--accent);
+      color: #000;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .cta:hover { background: var(--accent-hover); }
+
+    /* ===== Layout ===== */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    section { margin-bottom: 56px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(16,185,129,0.15);
+      color: #34d399;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 36px;
+      line-height: 1.25;
+      margin: 0 0 14px;
+    }
+
+    .lead {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #000;
+      border: none;
+    }
+
+    .btn.primary:hover { background: var(--accent-hover); }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--text);
+    }
+
+    /* ===== Titles ===== */
+    h2 {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .muted { color: var(--muted); }
+
+    /* ===== FAQ ===== */
+    details {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+
+    details + details { margin-top: 10px; }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    /* ===== Footer ===== */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 20px 40px;
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 768px) {
+      h1 { font-size: 28px; }
+      .hero { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .cta { padding: 8px 14px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="logo.png" alt="SMILE AI GROUP Logo" />
+        <span>SMILE AI GROUP</span>
+      </div>
+      <div class="nav-links">
+        <a href="#core">CORE</a>
+        <a href="#rule">5:5 규칙</a>
+        <a href="#exchange">환전</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <a class="cta" href="#join">시작하기</a>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div>
+        <span class="badge">공식 공개 · 투명 운영</span>
+        <h1>AI가 운영하고,<br/>회원이 함께 성장하는 플랫폼</h1>
+        <p class="lead">
+          SMILE AI GROUP은 AI 자동 운영, 5:5 동반 분배 규칙, CORE(참여증명)를 기반으로 설계된<br/>
+          AI‑driven Co‑Growth Platform입니다.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#rule">구조 한눈에 보기</a>
+          <a class="btn ghost" href="#core">CORE 개념</a>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card"><b>CORE 공급량</b><br/>총 1,000,000 CORE (고정)</div>
+        <div class="card"><b>분배 규칙</b><br/>회사 50% · 회원 50%</div>
+        <div class="card"><b>온체인 방향</b><br/>Web3 / Decentralized</div>
+      </div>
+    </section>
+
+    <!-- CORE -->
+    <section id="core">
+      <h2>CORE란 무엇인가</h2>
+      <div class="grid">
+        <div class="card">CORE는 코인이나 주식이 아닙니다.<br/>SMILE AI GROUP 생태계 참여를 증명하는 참여증명(Participation Proof) 단위입니다.</div>
+        <div class="card">1 CORE = 100 USDT (초기 기준)</div>
+        <div class="card">총 발행량 1,000,000 CORE 영구 고정<br/>규칙 변경 불가</div>
+      </div>
+    </section>
+
+    <!-- RULE -->
+    <section id="rule">
+      <h2>5 : 5 동반 분배 규칙</h2>
+      <div class="grid">
+        <div class="card">회사 50% · 회원 50%</div>
+        <div class="card">일일 배당 구조<br/>USDT : SP = 5 : 5</div>
+        <div class="card">SP는 서비스 사용 · 수익 · 재분배로 순환</div>
+      </div>
+    </section>
+
+    <!-- EXCHANGE -->
+    <section id="exchange">
+      <h2>SMILE AI EXCHANGE (USDT ↔ KRW)</h2>
+      <div class="grid">
+        <div class="card">내부 UID 기반 거래<br/>(매매 아님)</div>
+        <div class="card">기준 수수료 약 2%</div>
+        <div class="card">투명 관리 · 자동 정산</div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <h2>자주 묻는 질문</h2>
+      <details><summary>CORE는 코인인가요?</summary><p class="muted">아닙니다. 참여 증명 단위입니다.</p></details>
+      <details><summary>5:5 규칙은 변경되나요?</summary><p class="muted">변경 불가한 고정 규칙입니다.</p></details>
+      <details><summary>SP는 왜 필요한가요?</summary><p class="muted">생태계 서비스 사용과 재분배를 위한 포인트입니다.</p></details>
+    </section>
+
+    <!-- JOIN -->
+    <section id="join">
+      <h2>참여 / 문의</h2>
+      <div class="card">
+        단기 수익이 아닌 구조 이해를 통한 동반 성장을 지향합니다.<br/><br/>
+        대표: 최명성 (CHOI MYUNGSUNG)<br/>
+        총괄 AI: KAIO
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div>SMILE AI GROUP · AI-driven Co-Growth Platform</div>
+      <div>CORE Supply: 1,000,000 (Fixed) · Distribution Rule: 5:5</div>
+      <div>On-chain Direction: Web3 / Decentralized</div>
+      <div>© SMILE AI GROUP. All rights reserved.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
