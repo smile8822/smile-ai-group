@@ -1,246 +1,118 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="color-scheme" content="dark light" />
-  <title>SMILE AI GROUP | AI-driven Co-Growth Platform</title>
-  <meta name="description" content="SMILE AI GROUP는 AI 자동 운영, 5:5 동반 분배 규칙, CORE(참여증명)을 기반으로 설계된 AI-driven Co-Growth Platform입니다." />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SMILE AI GROUP | AI-driven Co-Growth Platform</title>
 
-  <style>
-    /* =====================
-       기본 변수 / 리셋
-    ====================== */
-    :root{
-      --bg:#0b0f14;
-      --bg2:#0e141c;
-      --card:rgba(255,255,255,.06);
-      --card2:rgba(255,255,255,.08);
-      --stroke:rgba(255,255,255,.10);
-      --txt:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.65);
-      --accent:#ffb44a;
-      --ok:#40d99a;
-      --radius:18px;
-      --radius2:26px;
-      --shadow:0 12px 40px rgba(0,0,0,.45);
-      --max:1100px;
-      --pad:18px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-      color:var(--txt);
-      background:
-        radial-gradient(900px 520px at 20% 10%, rgba(255,180,74,.14), transparent 55%),
-        radial-gradient(820px 520px at 80% 10%, rgba(64,217,154,.10), transparent 52%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
-    }
-    a{color:inherit;text-decoration:none}
-    button{font:inherit;cursor:pointer}
-
-    /* =====================
-       레이아웃
-    ====================== */
-    .wrap{max-width:var(--max);margin:0 auto;padding:28px 16px 80px}
-    header{
-      display:flex;align-items:center;justify-content:space-between;
-      gap:12px;margin-bottom:28px
-    }
-    .brand{display:flex;align-items:center;gap:10px;font-weight:700}
-    .logo{
-      width:40px;height:40px;border-radius:12px;
-      background:linear-gradient(135deg,#1f2a3a,#0e141c);
-      display:grid;place-items:center;box-shadow:var(--shadow)
-    }
-    nav{display:flex;gap:10px;flex-wrap:wrap}
-    .pill{
-      padding:10px 14px;border-radius:999px;
-      background:var(--card);border:1px solid var(--stroke);
-      color:var(--muted)
-    }
-    .pill.active{background:var(--card2);color:var(--txt)}
-
-    .hero{
-      display:grid;grid-template-columns:1.2fr .8fr;gap:18px
-    }
-    @media(max-width:900px){.hero{grid-template-columns:1fr}}
-
-    .card{
-      background:var(--card);
-      border:1px solid var(--stroke);
-      border-radius:var(--radius2);
-      padding:22px;box-shadow:var(--shadow)
-    }
-    .badge{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border-radius:999px;
-      background:rgba(64,217,154,.12);color:#bff3df;border:1px solid rgba(64,217,154,.35)
-    }
-    h1{margin:14px 0 8px;font-size:clamp(24px,4vw,36px)}
-    p{margin:8px 0;color:var(--muted)}
-    .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-    .btn{
-      padding:12px 18px;border-radius:14px;border:1px solid var(--stroke);
-      background:var(--card);color:var(--txt)
-    }
-    .btn.primary{background:linear-gradient(180deg,#ffbf6a,#ff9f2f);color:#1a1206;border:none}
-
-    section{margin-top:28px}
-    .section-title{font-size:20px;font-weight:700;margin-bottom:10px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    @media(max-width:900px){.grid{grid-template-columns:1fr}}
-
-    .box{
-      background:var(--card);border:1px solid var(--stroke);
-      border-radius:var(--radius);padding:16px
-    }
-    .kv{display:flex;justify-content:space-between;gap:10px}
-    .kv b{color:var(--txt)}
-
-    details{background:var(--card);border:1px solid var(--stroke);border-radius:14px;padding:12px}
-    summary{cursor:pointer;font-weight:600}
-    .ans{margin-top:8px;color:var(--muted)}
-
-    /* =====================
-       JOIN / 문의 (PC 강제 표시 핵심)
-    ====================== */
-    #join .actions{
-      display:flex !important; /* PC에서 안 보이던 문제 해결 */
-      gap:12px;flex-wrap:wrap;margin-top:14px
-    }
-
-    footer{
-      margin-top:40px;padding-top:18px;border-top:1px solid var(--stroke);
-      color:var(--muted);font-size:13px
-    }
-  </style>
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0b0e14;
+  color: #fff;
+}
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 40px 20px;
+}
+h1 {
+  font-size: 32px;
+}
+.card {
+  background: #141824;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.btn {
+  padding: 14px 22px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+.btn-primary {
+  background: #d4af37;
+  color: #000;
+  font-weight: bold;
+}
+.btn-secondary {
+  background: #2a2f45;
+  color: #fff;
+}
+.btn-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+footer {
+  text-align: center;
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 40px;
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
 
-    <!-- HEADER -->
-    <header>
-      <div class="brand">
-        <div class="logo">🤖</div>
-        <div>SMILE AI GROUP</div>
-      </div>
-      <nav>
-        <a class="pill" href="#core">CORE</a>
-        <a class="pill" href="#rule">5:5 규칙</a>
-        <a class="pill" href="#faq">FAQ</a>
-        <a class="pill" href="#join">문의</a>
-      </nav>
-    </header>
+<div class="container">
+  <h1>SMILE AI GROUP</h1>
+  <p>AI-driven Co-Growth Platform</p>
 
-    <!-- HERO -->
-    <div class="hero">
-      <div class="card">
-        <span class="badge">공식 공개 · 투명 운영</span>
-        <h1>AI가 운영하고,<br>회원이 함께 성장하는 플랫폼</h1>
-        <p>
-          SMILE AI GROUP은 AI 자동 운영, 5:5 동반 분배 규칙,
-          그리고 CORE(참여증명)을 기반으로 설계된
-          AI-driven Co-Growth Platform입니다.
-        </p>
-        <div class="cta">
-          <button class="btn primary" id="btnStart">구조 한눈에 보기</button>
-          <button class="btn" id="btnCore">CORE 개념</button>
-        </div>
-      </div>
+  <div class="card">
+    <h2>AI가 운영하고, 회원이 함께 성장하는 플랫폼</h2>
+    <p>
+      SMILE AI GROUP은 AI 자동 운영 · 5:5 동반 분배 규칙 · CORE 참여 증명을
+      기반으로 설계된 플랫폼입니다.
+    </p>
 
-      <div class="card">
-        <div class="box"><b>CORE 공급량</b><br>총 1,000,000 CORE (고정)</div>
-        <div class="box" style="margin-top:10px"><b>분배 규칙</b><br>회사 50% · 회원 50%</div>
-        <div class="box" style="margin-top:10px"><b>온체인 방향</b><br>Web3 / Decentralized</div>
-      </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="openJoin()">참여 시작하기</button>
+      <button class="btn btn-secondary" onclick="openContact()">문의하기</button>
     </div>
-
-    <!-- CORE -->
-    <section id="core">
-      <div class="section-title">CORE란 무엇인가</div>
-      <div class="grid">
-        <div class="box">CORE는 코인이 아닌 참여 증명(Participation Proof) 단위입니다.</div>
-        <div class="box">1 CORE = 100 USDT (초기 기준)</div>
-        <div class="box">총 발행량 1,000,000 CORE · 영구 고정</div>
-      </div>
-    </section>
-
-    <!-- RULE -->
-    <section id="rule">
-      <div class="section-title">5 : 5 동반 분배 규칙</div>
-      <div class="grid">
-        <div class="box">회사 50% · 회원 50%</div>
-        <div class="box">일일 배당 구조: USDT : SP = 5 : 5</div>
-        <div class="box">SP는 서비스 사용 · 수익 · 재분배로 순환</div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq">
-      <div class="section-title">자주 묻는 질문</div>
-      <details><summary>CORE는 코인인가요?</summary><div class="ans">아닙니다. 참여 증명 단위입니다.</div></details>
-      <details><summary>5:5 규칙은 변경되나요?</summary><div class="ans">아니요. 운영 헌법으로 고정됩니다.</div></details>
-      <details><summary>SP는 왜 필요한가요?</summary><div class="ans">서비스 사용과 생태계 순환을 위해 사용됩니다.</div></details>
-    </section>
-
-    <!-- JOIN / 문의 -->
-    <section id="join">
-      <div class="section-title">참여 / 문의</div>
-      <p>단기 수익이 아닌 <b>구조 이해를 통한 동반 성장</b>을 지향합니다.</p>
-
-      <div class="actions">
-        <button class="btn primary" id="btnJoin">참여 시작하기</button>
-        <button class="btn" id="btnContact">문의하기</button>
-        <button class="btn" id="btnCopy">소개 링크 복사</button>
-      </div>
-
-      <ul style="margin-top:14px;color:var(--muted)">
-        <li>대표: CHOI MYUNGSUNG</li>
-        <li>총괄 AI: KAIO</li>
-        <li>운영 원칙: 투명 · 공개 · 신뢰 · 5:5 동반 분배</li>
-      </ul>
-    </section>
-
-    <!-- FOOTER -->
-    <footer>
-      <div>SMILE AI GROUP · AI-driven Co-Growth Platform</div>
-      <div>CORE Supply: 1,000,000 (Fixed) · Distribution Rule: 5:5</div>
-      <div>On-chain Direction: Web3 / Decentralized</div>
-      <div>© <span id="year"></span> SMILE AI GROUP. All rights reserved.</div>
-    </footer>
-
   </div>
 
-  <script>
-    const $ = (s)=>document.querySelector(s);
-    const $$ = (s)=>document.querySelectorAll(s);
+  <div class="card">
+    <h3>CORE 구조</h3>
+    <ul>
+      <li>1 CORE = 100 USDT (초기 기준)</li>
+      <li>총 발행량: 1,000,000 CORE (영구 고정)</li>
+      <li>CORE는 코인이 아닌 참여 증명 단위</li>
+    </ul>
+  </div>
 
-    // 버튼 동작
-    $('#btnContact')?.addEventListener('click',()=>{
-      window.open('https://open.kakao.com/o/gmxZ6y6h','_blank');
-    });
-    $('#btnCopy')?.addEventListener('click',async()=>{
-      try{await navigator.clipboard.writeText(location.href);alert('링크가 복사되었습니다.');}
-      catch{prompt('복사하세요:',location.href)}
-    });
-    $('#btnStart')?.addEventListener('click',()=>location.hash='#rule');
-    $('#btnCore')?.addEventListener('click',()=>location.hash='#core');
-    $('#btnJoin')?.addEventListener('click',()=>alert('참여는 문의를 통해 안내됩니다.'));
+  <div class="card">
+    <h3>5 : 5 동반 분배 규칙</h3>
+    <ul>
+      <li>회사 50% / 회원 50%</li>
+      <li>일일 배당 구조: USDT : SP = 5 : 5</li>
+      <li>SP는 서비스 사용 · 수익 · 재분배로 순환</li>
+    </ul>
+  </div>
+</div>
 
-    // 메뉴 활성화
-    $$('nav .pill').forEach(a=>{
-      a.addEventListener('click',()=>{
-        $$('nav .pill').forEach(p=>p.classList.remove('active'));
-        a.classList.add('active');
-      });
-    });
+<footer>
+  CORE Supply: 1,000,000 (Fixed) · Distribution Rule: 5:5<br />
+  On-chain Direction: Web3 / Decentralized<br />
+  © SMILE AI GROUP. All rights reserved.
+</footer>
 
-    // 연도
-    $('#year').textContent=new Date().getFullYear();
-  </script>
+<script>
+// 🔗 카카오 오픈채팅 링크 (PC/모바일 공통)
+function openContact() {
+  window.open("https://open.kakao.com/o/gmxZ6y6h", "_blank");
+}
+
+function openJoin() {
+  alert(
+    "현재는 소개 및 문의 단계입니다.\n\n" +
+    "아래 ‘문의하기’를 통해 카카오 오픈채팅으로 문의해 주세요."
+  );
+}
+</script>
+
 </body>
 </html>
