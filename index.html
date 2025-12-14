@@ -1,312 +1,739 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark light" />
   <title>SMILE AI GROUP | AI-driven Co-Growth Platform</title>
+  <meta name="description" content="SMILE AI GROUP은 AI 자동 운영, 5:5 동반 분배 규칙, CORE(참여증명)를 기반으로 설계된 AI-driven Co-Growth Platform입니다." />
 
   <style>
-    :root {
-      --bg: #0f1720;
-      --card: rgba(255,255,255,0.06);
-      --border: rgba(255,255,255,0.12);
-      --text: #e6edf3;
-      --muted: #9aa4af;
-      --accent: #f59e0b;
-      --accent-hover: #fbbf24;
-      --radius: 16px;
+    :root{
+      --bg0:#0b0f14;
+      --bg1:#0e141c;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.085);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --txt: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --muted2: rgba(255,255,255,.55);
+      --accent:#ffb44a;
+      --accent2:#ffd18a;
+      --ok:#40d9a2;
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 26px;
+      --max: 1100px;
+      --pad: 18px;
     }
 
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 50% -200px, #1f2937, var(--bg));
-      color: var(--text);
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple SD Gothic Neo","Noto Sans KR", "Malgun Gothic", sans-serif;
+      color: var(--txt);
+      background:
+        radial-gradient(900px 520px at 20% 10%, rgba(255,180,74,.14), transparent 55%),
+        radial-gradient(820px 520px at 80% 10%, rgba(64,217,162,.10), transparent 52%),
+        radial-gradient(900px 700px at 40% 85%, rgba(120,170,255,.08), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 55%, #080b10);
+      overflow-x:hidden;
     }
 
-    a { color: inherit; text-decoration: none; }
+    a{ color: inherit; text-decoration:none; }
+    button{ font: inherit; }
+    .wrap{ max-width: var(--max); margin:0 auto; padding: 0 var(--pad); }
 
-    /* ===== Header ===== */
-    header {
+    /* Header */
+    header{
       position: sticky;
-      top: 0;
-      z-index: 1000;
+      top:0;
+      z-index: 50;
       backdrop-filter: blur(12px);
-      background: rgba(15,23,32,0.7);
-      border-bottom: 1px solid var(--border);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(10,14,20,.62);
+      border-bottom: 1px solid rgba(255,255,255,.06);
     }
-
-    .nav {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      padding: 12px 0;
     }
-
-    .brand {
-      display: flex;
-      align-items: center;
+    .brand{
+      display:flex;
+      align-items:center;
       gap: 10px;
-      font-weight: 700;
+      min-width: 220px;
     }
-
-    .brand img {
+    .brand img{
       width: 28px;
       height: 28px;
+      border-radius: 8px;
+      object-fit: contain;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 6px;
     }
+    .brand .t1{ font-weight: 800; letter-spacing: .4px; font-size: 14px; line-height: 1.1; }
+    .brand .t2{ font-size: 11px; color: var(--muted2); margin-top: 1px; }
 
-    .nav-links {
-      display: flex;
-      gap: 18px;
-      font-size: 14px;
-      color: var(--muted);
+    .menu{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content:center;
     }
-
-    .cta {
-      background: var(--accent);
-      color: #000;
-      padding: 10px 16px;
+    .pill{
+      padding: 8px 12px;
       border-radius: 999px;
-      font-weight: 700;
-      font-size: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.82);
+      font-size: 13px;
+      transition: .18s transform, .18s background, .18s border-color;
+      user-select:none;
+      cursor:pointer;
+    }
+    .pill:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.14); }
+    .pill.active{ background: rgba(255,180,74,.14); border-color: rgba(255,180,74,.35); }
+
+    .cta{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      justify-content:flex-end;
+      min-width: 220px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.90);
+      cursor:pointer;
+      transition: .18s transform, .18s background, .18s border-color;
+      user-select:none;
+      white-space: nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.16); }
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(255,180,74,.95), rgba(255,159,43,.92));
+      border-color: rgba(255,180,74,.65);
+      color: #1a1207;
+      font-weight: 800;
+      box-shadow: 0 10px 28px rgba(255,180,74,.18);
+    }
+    .btn.primary:hover{ transform: translateY(-1px) scale(1.01); }
+    .btn.ghost{
+      background: rgba(255,255,255,.04);
     }
 
-    .cta:hover { background: var(--accent-hover); }
-
-    /* ===== Layout ===== */
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px 20px 80px;
+    /* Hero */
+    .hero{ padding: 26px 0 14px; }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.35fr .95fr;
+      gap: 16px;
+      align-items: stretch;
     }
-
-    section { margin-bottom: 56px; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
+    .panel{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.045);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
     }
+    .panel-inner{ padding: 18px; }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-    }
-
-    /* ===== Hero ===== */
-    .hero {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 32px;
-      align-items: center;
-    }
-
-    .badge {
-      display: inline-block;
-      background: rgba(16,185,129,0.15);
-      color: #34d399;
-      padding: 6px 12px;
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 7px 10px;
       border-radius: 999px;
+      border: 1px solid rgba(64,217,162,.35);
+      background: rgba(64,217,162,.10);
+      color: rgba(255,255,255,.90);
       font-size: 12px;
-      margin-bottom: 12px;
+      font-weight: 700;
+      width: fit-content;
     }
-
-    h1 {
-      font-size: 36px;
-      line-height: 1.25;
-      margin: 0 0 14px;
+    .dot{
+      width: 9px; height: 9px;
+      border-radius: 999px;
+      background: var(--ok);
+      box-shadow: 0 0 0 5px rgba(64,217,162,.12);
     }
-
-    .lead {
+    h1{
+      margin: 12px 0 6px;
+      font-size: 34px;
+      line-height: 1.15;
+      letter-spacing: -.4px;
+    }
+    .lead{
+      margin: 0;
       color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 22px;
+      font-size: 14px;
+      line-height: 1.7;
+      max-width: 62ch;
+    }
+    .actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
     }
 
-    .hero-actions {
-      display: flex;
+    .cards{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      height: 100%;
+    }
+    .kpi{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius: 18px;
+      padding: 14px;
+      min-height: 92px;
+    }
+    .kpi .k{ font-size: 12px; color: var(--muted2); }
+    .kpi .v{ margin-top: 6px; font-size: 16px; font-weight: 900; letter-spacing: .2px; }
+    .kpi .s{ margin-top: 6px; font-size: 12px; color: rgba(255,255,255,.72); }
+
+    /* Sections */
+    section{ padding: 14px 0; scroll-margin-top: 86px; }
+    .section-title{
+      font-size: 18px;
+      font-weight: 900;
+      margin: 10px 0 10px;
+      letter-spacing: -.2px;
+    }
+    .sub{
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+      max-width: 88ch;
+    }
+
+    .tile-grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .tile{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius);
+      padding: 14px;
+      min-height: 92px;
+    }
+    .tile .t{ font-weight: 900; font-size: 14px; margin: 0 0 6px; }
+    .tile .d{ margin:0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+    .big{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.045);
+      border-radius: var(--radius2);
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.28);
+    }
+
+    /* Exchange */
+    .exchange-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* FAQ */
+    .faq{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    details{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.035);
+      border-radius: 16px;
+      padding: 12px 12px;
+      transition: .18s border-color, .18s background;
+    }
+    details[open]{ border-color: rgba(255,180,74,.28); background: rgba(255,180,74,.06); }
+    summary{
+      cursor:pointer;
+      list-style:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      font-weight: 900;
+      font-size: 14px;
+      color: rgba(255,255,255,.90);
+    }
+    summary::-webkit-details-marker{ display:none; }
+    .ans{
+      margin: 10px 2px 2px;
+      color: rgba(255,255,255,.76);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* Join / Contact */
+    .join-grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 12px;
+    }
+    .info-list{
+      margin: 10px 0 0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap: 8px;
+    }
+    .info-item{
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.035);
+      color: rgba(255,255,255,.82);
+      font-size: 13px;
+    }
+    .kv{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .kv b{ color: rgba(255,255,255,.92); }
+    .mini{ color: rgba(255,255,255,.62); font-size: 12px; }
+
+    footer{
+      margin-top: 18px;
+      padding: 18px 0 26px;
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .foot{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
       gap: 14px;
       flex-wrap: wrap;
     }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
-    .btn {
-      padding: 12px 18px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 14px;
-      border: 1px solid var(--border);
+    /* Mobile */
+    @media (max-width: 920px){
+      .grid{ grid-template-columns: 1fr; }
+      .cards{ grid-template-columns: 1fr 1fr; }
+      .tile-grid{ grid-template-columns: 1fr; }
+      .exchange-grid{ grid-template-columns: 1fr; }
+      .join-grid{ grid-template-columns: 1fr; }
+      .brand{ min-width: auto; }
+      .cta{ min-width: auto; }
+    }
+    @media (max-width: 520px){
+      :root{ --pad: 14px; }
+      h1{ font-size: 28px; }
+      .cards{ grid-template-columns: 1fr; }
+      .btn{ padding: 12px 14px; border-radius: 16px; }
+      .pill{ padding: 9px 12px; }
+      .nav{ gap: 10px; }
+      .brand img{ width: 26px; height: 26px; }
+      section{ scroll-margin-top: 96px; }
     }
 
-    .btn.primary {
-      background: var(--accent);
-      color: #000;
-      border: none;
-    }
-
-    .btn.primary:hover { background: var(--accent-hover); }
-
-    .btn.ghost {
-      background: transparent;
-      color: var(--text);
-    }
-
-    /* ===== Titles ===== */
-    h2 {
-      font-size: 24px;
-      margin-bottom: 16px;
-    }
-
-    .muted { color: var(--muted); }
-
-    /* ===== FAQ ===== */
-    details {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-    }
-
-    details + details { margin-top: 10px; }
-
-    summary {
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    summary::-webkit-details-marker { display: none; }
-
-    /* ===== Footer ===== */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 24px 20px 40px;
-      color: var(--muted);
-    }
-
-    .footer-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      gap: 12px;
-      font-size: 13px;
-    }
-
-    /* ===== Mobile ===== */
-    @media (max-width: 768px) {
-      h1 { font-size: 28px; }
-      .hero { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      .cta { padding: 8px 14px; font-size: 13px; }
-    }
+    /* Small helpers */
+    .muted{ color: var(--muted); }
+    .hr{ height: 1px; background: rgba(255,255,255,.06); margin: 10px 0; }
   </style>
 </head>
-<body>
 
-  <!-- HEADER -->
+<body>
   <header>
-    <div class="nav">
-      <div class="brand">
-        <img src="logo.png" alt="SMILE AI GROUP Logo" />
-        <span>SMILE AI GROUP</span>
+    <div class="wrap">
+      <div class="nav">
+        <a class="brand" href="#top" data-scroll>
+          <img src="logo.png" alt="SMILE AI GROUP Logo" />
+          <div>
+            <div class="t1">SMILE AI GROUP</div>
+            <div class="t2">AI-driven Co-Growth Platform</div>
+          </div>
+        </a>
+
+        <nav class="menu" aria-label="main">
+          <a class="pill" href="#core" data-scroll>CORE</a>
+          <a class="pill" href="#rule" data-scroll>5:5 규칙</a>
+          <a class="pill" href="#exchange" data-scroll>환전</a>
+          <a class="pill" href="#faq" data-scroll>FAQ</a>
+        </nav>
+
+        <div class="cta">
+          <button class="btn ghost" type="button" id="btnContact">문의</button>
+          <button class="btn primary" type="button" id="btnStart">시작하기</button>
+        </div>
       </div>
-      <div class="nav-links">
-        <a href="#core">CORE</a>
-        <a href="#rule">5:5 규칙</a>
-        <a href="#exchange">환전</a>
-        <a href="#faq">FAQ</a>
-      </div>
-      <a class="cta" href="#join">시작하기</a>
     </div>
   </header>
 
-  <!-- MAIN -->
-  <main>
+  <main id="top">
+    <div class="wrap">
+      <!-- HERO -->
+      <div class="hero">
+        <div class="grid">
+          <div class="panel">
+            <div class="panel-inner">
+              <div class="badge"><span class="dot"></span> 공식 공개 · 투명 운영</div>
+              <h1>AI가 운영하고,<br/>회원이 함께 성장하는 플랫폼</h1>
+              <p class="lead">
+                SMILE AI GROUP은 <b>AI 자동 운영</b>, <b>5:5 동반 분배 규칙</b>, 그리고 <b>CORE(참여증명)</b>을 기반으로 설계된
+                AI-driven Co-Growth Platform입니다.
+                <br/><span class="muted">Web3 / 온체인 방향 확장을 전제로, 모든 흐름을 “투명하게 연결”합니다.</span>
+              </p>
 
-    <!-- HERO -->
-    <section class="hero">
-      <div>
-        <span class="badge">공식 공개 · 투명 운영</span>
-        <h1>AI가 운영하고,<br/>회원이 함께 성장하는 플랫폼</h1>
-        <p class="lead">
-          SMILE AI GROUP은 AI 자동 운영, 5:5 동반 분배 규칙, CORE(참여증명)를 기반으로 설계된<br/>
-          AI‑driven Co‑Growth Platform입니다.
-        </p>
-        <div class="hero-actions">
-          <a class="btn primary" href="#rule">구조 한눈에 보기</a>
-          <a class="btn ghost" href="#core">CORE 개념</a>
+              <div class="actions">
+                <button class="btn primary" type="button" id="btnOverview">구조 한눈에 보기</button>
+                <button class="btn" type="button" id="btnCore">CORE 개념</button>
+              </div>
+
+              <div class="hr"></div>
+              <p class="muted" style="margin:0;font-size:12.5px;line-height:1.75;">
+                <b>핵심:</b> “복잡한 기능 ❌ / 신뢰·완성도 ✅”<br/>
+                누구나 10초 안에 이해하고, 운영은 AI가 반복·증명·복제합니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-inner">
+              <div class="cards">
+                <div class="kpi">
+                  <div class="k">CORE 총량</div>
+                  <div class="v">1,000,000 (Fixed)</div>
+                  <div class="s">총발행량 고정 · 변경 불가</div>
+                </div>
+                <div class="kpi">
+                  <div class="k">분배 원칙</div>
+                  <div class="v">5 : 5</div>
+                  <div class="s">회사 50% · 회원 50%</div>
+                </div>
+                <div class="kpi">
+                  <div class="k">초기 기준</div>
+                  <div class="v">1 CORE = 100 USDT</div>
+                  <div class="s">참여 기준 단위</div>
+                </div>
+                <div class="kpi">
+                  <div class="k">온체인 방향</div>
+                  <div class="v">Web3 / Decentralized</div>
+                  <div class="s">지분증명·운영확장</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="grid">
-        <div class="card"><b>CORE 공급량</b><br/>총 1,000,000 CORE (고정)</div>
-        <div class="card"><b>분배 규칙</b><br/>회사 50% · 회원 50%</div>
-        <div class="card"><b>온체인 방향</b><br/>Web3 / Decentralized</div>
-      </div>
-    </section>
+      <!-- OVERVIEW -->
+      <section id="overview">
+        <div class="big">
+          <div class="section-title">구조 한눈에 보기</div>
+          <p class="sub">
+            SMILE AI GROUP은 “돈이 도는 구조”를 AI가 반복 운영하고, 회원은 그 구조에 참여하며 성장합니다.
+          </p>
 
-    <!-- CORE -->
-    <section id="core">
-      <h2>CORE란 무엇인가</h2>
-      <div class="grid">
-        <div class="card">CORE는 코인이나 주식이 아닙니다.<br/>SMILE AI GROUP 생태계 참여를 증명하는 참여증명(Participation Proof) 단위입니다.</div>
-        <div class="card">1 CORE = 100 USDT (초기 기준)</div>
-        <div class="card">총 발행량 1,000,000 CORE 영구 고정<br/>규칙 변경 불가</div>
-      </div>
-    </section>
+          <div class="tile-grid">
+            <div class="tile">
+              <p class="t">1) 참여</p>
+              <p class="d">회원은 CORE로 참여합니다. CORE는 코인/주식이 아니라 <b>참여증명(Participation Proof)</b> 단위입니다.</p>
+            </div>
+            <div class="tile">
+              <p class="t">2) 운영</p>
+              <p class="d">AI가 환전·정산·기록·공개 운영을 반복합니다. “규칙 기반 자동 운영”이 원칙입니다.</p>
+            </div>
+            <div class="tile">
+              <p class="t">3) 분배</p>
+              <p class="d">발생 수익은 <b>5:5 규칙</b>으로 분배됩니다. 회원 배당은 <b>USDT 5 : SP 5</b> 구조로 연결됩니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <!-- RULE -->
-    <section id="rule">
-      <h2>5 : 5 동반 분배 규칙</h2>
-      <div class="grid">
-        <div class="card">회사 50% · 회원 50%</div>
-        <div class="card">일일 배당 구조<br/>USDT : SP = 5 : 5</div>
-        <div class="card">SP는 서비스 사용 · 수익 · 재분배로 순환</div>
-      </div>
-    </section>
+      <!-- CORE -->
+      <section id="core">
+        <div class="big">
+          <div class="section-title">CORE란 무엇인가</div>
+          <p class="sub">
+            CORE는 투자상품이 아니라, SMILE AI GROUP 생태계 참여를 증명하는 단위입니다.
+            누구도 임의로 규칙을 바꾸지 못하며, “고정/공개/투명”이 기본입니다.
+          </p>
 
-    <!-- EXCHANGE -->
-    <section id="exchange">
-      <h2>SMILE AI EXCHANGE (USDT ↔ KRW)</h2>
-      <div class="grid">
-        <div class="card">내부 UID 기반 거래<br/>(매매 아님)</div>
-        <div class="card">기준 수수료 약 2%</div>
-        <div class="card">투명 관리 · 자동 정산</div>
-      </div>
-    </section>
+          <div class="tile-grid">
+            <div class="tile">
+              <p class="t">참여증명 단위</p>
+              <p class="d">코인/주식이 아닌 <b>Participation Proof</b> 기반 참여 단위</p>
+            </div>
+            <div class="tile">
+              <p class="t">총량 고정</p>
+              <p class="d"><b>총 발행량 1,000,000</b> CORE 영구 고정</p>
+            </div>
+            <div class="tile">
+              <p class="t">초기 기준</p>
+              <p class="d"><b>1 CORE = 100 USDT</b> (초기 기준)</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <!-- FAQ -->
-    <section id="faq">
-      <h2>자주 묻는 질문</h2>
-      <details><summary>CORE는 코인인가요?</summary><p class="muted">아닙니다. 참여 증명 단위입니다.</p></details>
-      <details><summary>5:5 규칙은 변경되나요?</summary><p class="muted">변경 불가한 고정 규칙입니다.</p></details>
-      <details><summary>SP는 왜 필요한가요?</summary><p class="muted">생태계 서비스 사용과 재분배를 위한 포인트입니다.</p></details>
-    </section>
+      <!-- 5:5 RULE -->
+      <section id="rule">
+        <div class="big">
+          <div class="section-title">5 : 5 동반 분배 규칙</div>
+          <p class="sub">
+            SMILE AI GROUP의 모든 운영은 <b>5:5 규칙</b>을 기반으로 합니다.
+            회사 수익은 먼저 규칙대로 분배되며, 참여자가 받는 배당은 <b>USDT 5 : SP 5</b> 구조로 지급됩니다.
+          </p>
 
-    <!-- JOIN -->
-    <section id="join">
-      <h2>참여 / 문의</h2>
-      <div class="card">
-        단기 수익이 아닌 구조 이해를 통한 동반 성장을 지향합니다.<br/><br/>
-        대표: 최명성 (CHOI MYUNGSUNG)<br/>
-        총괄 AI: KAIO
-      </div>
-    </section>
+          <div class="tile-grid">
+            <div class="tile">
+              <p class="t">분배 원칙</p>
+              <p class="d">회사 50% / 회원 50% — 규칙은 고정이며 공개됩니다.</p>
+            </div>
+            <div class="tile">
+              <p class="t">일일 배당 구조</p>
+              <p class="d">회원 배당은 <b>USDT : SP = 5 : 5</b>로 연결됩니다.</p>
+            </div>
+            <div class="tile">
+              <p class="t">SP 순환</p>
+              <p class="d">SP는 서비스 사용·성장·수익·재분배로 순환하며 생태계 연결의 핵심입니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
+      <!-- EXCHANGE -->
+      <section id="exchange">
+        <div class="big">
+          <div class="section-title">SMILE AI EXCHANGE (USDT ↔ KRW 환전)</div>
+          <p class="sub">
+            환전은 단순 매매가 아니라, <b>회원 ↔ 회사 간 내부 거래</b>로 운영됩니다.
+            모든 거래는 UID 기반으로 연결되어 <b>투명하게 기록·관리</b>됩니다.
+          </p>
+
+          <div class="exchange-grid">
+            <div class="tile">
+              <p class="t">내부 UID 기반 거래</p>
+              <p class="d">“매매”가 아닌 내부 거래 구조 (회원↔회사)</p>
+            </div>
+            <div class="tile">
+              <p class="t">기준 수수료</p>
+              <p class="d">기본 수수료: <b>약 2%</b> (운영정책에 따라 고지)</p>
+            </div>
+            <div class="tile">
+              <p class="t">투명 관리 · 자동 정산</p>
+              <p class="d">기록·정산을 AI가 반복 운영 (공개/검증 중심)</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq">
+        <div class="big">
+          <div class="section-title">자주 묻는 질문 (FAQ)</div>
+          <p class="sub">형님들이 가장 많이 묻는 핵심만 간단히 정리했습니다.</p>
+
+          <div class="faq">
+            <details>
+              <summary>
+                <span>CORE는 코인인가요? 주식인가요?</span>
+                <span class="mini">열기/닫기</span>
+              </summary>
+              <div class="ans">아닙니다. CORE는 SMILE AI GROUP 생태계 참여를 증명하는 <b>참여증명(Participation Proof)</b> 단위입니다.</div>
+            </details>
+
+            <details>
+              <summary>
+                <span>5:5 규칙은 변경되나요?</span>
+                <span class="mini">열기/닫기</span>
+              </summary>
+              <div class="ans">변경 불가한 고정 규칙입니다. “규칙 고정 + 공개 + 투명 운영”을 원칙으로 합니다.</div>
+            </details>
+
+            <details>
+              <summary>
+                <span>환전은 거래소처럼 매매하는 건가요?</span>
+                <span class="mini">열기/닫기</span>
+              </summary>
+              <div class="ans">아닙니다. 환전은 <b>회원↔회사 내부 거래</b>로 운영되며, UID 기반으로 연결되어 투명하게 기록·정산됩니다.</div>
+            </details>
+
+            <details>
+              <summary>
+                <span>SP는 왜 필요하나요?</span>
+                <span class="mini">열기/닫기</span>
+              </summary>
+              <div class="ans">SP는 생태계 서비스 사용과 성장, 그리고 재분배를 연결하는 포인트입니다. 구조를 “순환”시키는 역할을 합니다.</div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- JOIN -->
+      <section id="join">
+        <div class="big">
+          <div class="section-title">참여 / 문의</div>
+          <p class="sub">
+            단기 수익이 아니라 <b>구조 이해를 통한 동반 성장</b>을 지향합니다.
+            아래 버튼으로 “시작 흐름”을 바로 진행할 수 있습니다.
+          </p>
+
+          <div class="join-grid">
+            <div>
+              <div class="actions" style="margin-top:0;">
+                <button class="btn primary" type="button" id="btnJoin">참여 시작하기</button>
+                <button class="btn" type="button" id="btnCopy">소개 링크 복사</button>
+              </div>
+
+              <ul class="info-list">
+                <li class="info-item">
+                  <div class="kv"><b>대표</b><span>최명성 (CHOI MYUNGSUNG)</span></div>
+                </li>
+                <li class="info-item">
+                  <div class="kv"><b>총괄 AI</b><span>KAIO</span></div>
+                </li>
+                <li class="info-item">
+                  <div class="kv"><b>운영 원칙</b><span>투명 · 공개 · 신뢰 · 5:5 동반 분배</span></div>
+                </li>
+              </ul>
+
+              <p class="mini" style="margin:10px 2px 0; line-height:1.6;">
+                * 안내: 본 페이지는 구조 소개용이며, 실제 운영 정책(수수료/절차/KYC 등)은 내부 규정과 고지에 따릅니다.
+              </p>
+            </div>
+
+            <div>
+              <div class="tile" style="min-height:auto;">
+                <p class="t">형님들 “바로 이해”용 10초 설명</p>
+                <p class="d">
+                  1) <b>CORE</b>로 참여(참여증명)<br/>
+                  2) AI가 운영(환전·정산·기록·공개)<br/>
+                  3) 수익은 <b>5:5</b>로 분배(회원 배당은 <b>USDT 5 : SP 5</b>)<br/>
+                  4) Web3/온체인으로 투명 확장
+                </p>
+              </div>
+
+              <div class="tile" style="margin-top:12px; min-height:auto;">
+                <p class="t">문의 버튼 동작</p>
+                <p class="d">
+                  지금은 “문의 클릭 → 안내 팝업”으로 연결해 두었습니다.<br/>
+                  원하시면 다음 단계에서 <b>카톡/텔레그램/구글폼</b> 링크로 바로 붙여드릴게요.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="wrap foot">
+          <div>
+            <div style="font-weight:800;color:rgba(255,255,255,.72);">SMILE AI GROUP</div>
+            <div class="mini">AI-driven Co-Growth Platform</div>
+          </div>
+          <div class="mini" style="text-align:right;">
+            <div>CORE Supply: <span class="mono">1,000,000</span> (Fixed) · Distribution Rule: <b>5:5</b></div>
+            <div>On-chain Direction: Web3 / Decentralized</div>
+            <div>© <span id="year"></span> SMILE AI GROUP. All rights reserved.</div>
+          </div>
+        </div>
+      </footer>
+    </div>
   </main>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-inner">
-      <div>SMILE AI GROUP · AI-driven Co-Growth Platform</div>
-      <div>CORE Supply: 1,000,000 (Fixed) · Distribution Rule: 5:5</div>
-      <div>On-chain Direction: Web3 / Decentralized</div>
-      <div>© SMILE AI GROUP. All rights reserved.</div>
-    </div>
-  </footer>
+  <script>
+    // ===== Helpers
+    const $ = (s, p=document) => p.querySelector(s);
+    const $$ = (s, p=document) => [...p.querySelectorAll(s)];
 
+    function smoothTo(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.scrollIntoView({ behavior:'smooth', block:'start' });
+      // active menu highlight
+      $$('.pill').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+id));
+    }
+
+    // ===== Top buttons
+    $('#btnStart')?.addEventListener('click', () => smoothTo('join'));
+    $('#btnContact')?.addEventListener('click', () => {
+      // 여기서 카톡/텔레그램/구글폼 링크로 바꿔도 됨
+      alert(
+`문의 안내
+- 현재: 소개 페이지(데모) 상태입니다.
+- 다음 단계: 카톡/텔레그램/구글폼 연결 가능합니다.
+
+원하시는 문의 채널(카톡 링크/텔레그램 링크/구글폼)을 보내주시면
+버튼을 즉시 연결해 드립니다.`
+      );
+      smoothTo('join');
+    });
+
+    $('#btnOverview')?.addEventListener('click', () => smoothTo('overview'));
+    $('#btnCore')?.addEventListener('click', () => smoothTo('core'));
+    $('#btnJoin')?.addEventListener('click', () => {
+      alert("참여 시작 흐름은 다음 단계에서 '실제 신청/문의 채널'로 연결됩니다.\n원하시는 연결 방식(카톡/텔레그램/구글폼)을 알려주세요.");
+    });
+
+    // ===== Nav smooth
+    $$('[data-scroll]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        const href = a.getAttribute('href') || '';
+        if(href.startsWith('#')){
+          e.preventDefault();
+          smoothTo(href.slice(1));
+        }
+      });
+    });
+
+    // ===== Copy link
+    $('#btnCopy')?.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(location.href);
+        alert("현재 페이지 링크가 복사되었습니다.");
+      }catch(e){
+        prompt("복사가 막혔습니다. 아래 링크를 직접 복사하세요:", location.href);
+      }
+    });
+
+    // ===== Active menu while scrolling (simple)
+    const sections = ['core','rule','exchange','faq'];
+    const obs = new IntersectionObserver((entries)=>{
+      const vis = entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+      if(!vis) return;
+      const id = vis.target.id;
+      $$('.pill').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+id));
+    }, { rootMargin: '-30% 0px -55% 0px', threshold: [0.05, 0.12, 0.2] });
+
+    sections.forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) obs.observe(el);
+    });
+
+    // Year
+    $('#year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
