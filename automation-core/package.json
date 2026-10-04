@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "verify": "node scripts/verify-core.mjs",
+    "verify": "node scripts/verify-core.mjs && node scripts/verify-phase2.mjs",
     "ingest:gdrive": "node scripts/import-google-drive-large-media.mjs"
   }
 }
