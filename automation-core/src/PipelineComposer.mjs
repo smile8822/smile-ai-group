@@ -94,9 +94,10 @@ export function composeGoldenPipeline(request) {
   if (request.largeMedia === true) capabilities.unshift("LARGE_MEDIA_ASSETIZATION");
 
   const orderedCapabilities = unique(capabilities);
-  const modules = orderedCapabilities.map((capability) =>
-    chooseModule(capability, request),
-  );
+  const modules = orderedCapabilities.map((capability) => ({
+    capability,
+    module: chooseModule(capability, request),
+  }));
 
   const plan = {
     planVersion: 1,
@@ -108,10 +109,8 @@ export function composeGoldenPipeline(request) {
     language: request.language || null,
     platform: request.platform || null,
     capabilities: orderedCapabilities,
-    moduleBindings: modules.map((module) => ({
-      capability: module.capabilities.find((capability) =>
-        orderedCapabilities.includes(capability),
-      ),
+    moduleBindings: modules.map(({ capability, module }) => ({
+      capability,
       moduleId: module.id,
       moduleVersion: module.version,
     })),
