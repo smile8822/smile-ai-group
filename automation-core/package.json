@@ -1,0 +1,10 @@
+{
+  "name": "@smile-ai-group/ai-automation-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify": "node scripts/verify-core.mjs",
+    "ingest:gdrive": "node scripts/import-google-drive-large-media.mjs"
+  }
+}

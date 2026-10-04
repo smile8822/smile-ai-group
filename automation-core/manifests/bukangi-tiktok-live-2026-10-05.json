@@ -1,0 +1,75 @@
+{
+  "contract": "SMILE_AI_GROUP_LARGE_MEDIA_ASSETIZATION_V1",
+  "owner": "SMILE_AI_GROUP",
+  "workload": "BUKANGI_TIKTOK_LIVE",
+  "createdAt": "2026-10-05T01:49:00+09:00",
+  "sourceFolder": {
+    "provider": "GOOGLE_DRIVE",
+    "name": "부캉이_틱톡LIVE_원본",
+    "folderId": "1N7JCgGW2oEcp-yx4siG1-5bRh2_xnuut"
+  },
+  "policy": {
+    "customerManualSplit": false,
+    "masterImmutable": true,
+    "onlyQcPassedScenesBecomeGold": true,
+    "rejectedScenesRemainMasterOnly": true
+  },
+  "files": [
+    {
+      "fileId": "1xN0eDHGcjWBscNOq13PBL_duujEtrDcj",
+      "name": "부캉이_TIKTOK_LIVE_2026-10-01_1707_KST_61분31초.mp4",
+      "sizeBytes": 837276607,
+      "duration": "61:31",
+      "goldStatus": "PENDING_GROUP_CORE_ANALYSIS"
+    },
+    {
+      "fileId": "18fey6JT2DxICxjUjeM1tou-Fbka-vRKR",
+      "name": "부캉이_TIKTOK_LIVE_2026-10-02_1405_KST_26분35초.mp4",
+      "sizeBytes": 561251629,
+      "duration": "26:35",
+      "goldStatus": "PENDING_GROUP_CORE_ANALYSIS"
+    },
+    {
+      "fileId": "1zW40zULjsJvDF7Eho4HmubwAp9L2CJ55",
+      "name": "부캉이_TIKTOK_LIVE_2026-10-03_1837_KST_31분22초.mp4",
+      "sizeBytes": 315744535,
+      "duration": "31:22",
+      "goldStatus": "INSPECTED_SUBSET"
+    },
+    {
+      "fileId": "1ezEWeBFWxYV3iaXB13lYBMpDq_Slm4nr",
+      "name": "부캉이_TIKTOK_LIVE_2026-10-02_1519_KST_80분35초.mp4",
+      "sizeBytes": 872279796,
+      "duration": "80:35",
+      "goldStatus": "PENDING_GROUP_CORE_ANALYSIS"
+    },
+    {
+      "fileId": "1TfcFZu-281lRkN9RLyM7X5KV-uSrtGrB",
+      "name": "부캉이_TIKTOK_LIVE_2026-10-03_1716_KST_55분14초.mp4",
+      "sizeBytes": 932683689,
+      "duration": "55:14",
+      "goldStatus": "PENDING_GROUP_CORE_ANALYSIS"
+    },
+    {
+      "fileId": "1GInH6H80ZcEyctGyTo46pHsFT1v4cvQh",
+      "name": "부캉이_TIKTOK_LIVE_2026-10-02_1700_KST_11분47초.mp4",
+      "sizeBytes": 246570709,
+      "duration": "11:47",
+      "goldStatus": "INSPECTED_SUBSET"
+    },
+    {
+      "fileId": "1J8kC8iZPRDWJ_oPxKIA5hje2Gwe2qHcF",
+      "name": "부캉이_TIKTOK_LIVE_2026-10-01_1833_KST_19분57초.mp4",
+      "sizeBytes": 236496793,
+      "duration": "19:57",
+      "goldStatus": "INSPECTED_SUBSET"
+    },
+    {
+      "fileId": "17TdJ0tpn5JIAfOIFy27qoXX0IV9WkWBW",
+      "name": "부캉이_TIKTOK_LIVE_2026-10-02_1445_KST_11분02초.mp4",
+      "sizeBytes": 217432824,
+      "duration": "11:02",
+      "goldStatus": "INSPECTED_SUBSET"
+    }
+  ]
+}
