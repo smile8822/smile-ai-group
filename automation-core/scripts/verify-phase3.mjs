@@ -15,7 +15,9 @@ import {
 import {
   buildFirstImpactDecision,
   scoreCreativeIdea,
+  scoreCreativeTitle,
   selectCreativeIdea,
+  selectCreativeTitle,
 } from "../src/CreativeIdeationEngine.mjs";
 
 clearSuccessBaselineRegistryForTests();
@@ -418,4 +420,92 @@ assert.equal(scoreCreativeIdea({
   feasibilityScore: 1,
   truthSafetyScore: 1,
   repetitionRiskScore: 0,
+}), 1);
+
+
+const titleSelection = selectCreativeTitle({
+  request: { requestId: "title-001", targetPlatforms: ["tiktok"] },
+  platform: "tiktok",
+  titleRequired: true,
+  candidates: [
+    {
+      id: "title-fresh",
+      platform: "tiktok",
+      text: "새벽 5시, 이 가게만 먼저 불이 켜지는 이유",
+      angle: "HUMAN_CURIOSITY",
+      noveltyScore: 0.94,
+      firstImpactScore: 0.92,
+      clarityScore: 0.90,
+      relevanceScore: 0.95,
+      platformFitScore: 0.91,
+      truthSafetyScore: 0.99,
+      curiosityScore: 0.93,
+      repetitionRiskScore: 0.10,
+      clickbaitRiskScore: 0.08,
+    },
+    {
+      id: "title-generic",
+      platform: "tiktok",
+      text: "꼭 가봐야 할 맛집 3가지 이유",
+      angle: "GENERIC_LIST",
+      noveltyScore: 0.30,
+      firstImpactScore: 0.45,
+      clarityScore: 0.88,
+      relevanceScore: 0.70,
+      platformFitScore: 0.62,
+      truthSafetyScore: 0.90,
+      curiosityScore: 0.60,
+      repetitionRiskScore: 0.84,
+      clickbaitRiskScore: 0.42,
+    },
+  ],
+});
+assert.equal(titleSelection.selected.id, "title-fresh");
+assert.equal(titleSelection.policy.repetitiveRecentTitlesBlocked, true);
+assert.equal(titleSelection.policy.curiosityAllowedWithoutMisleadingClickbait, true);
+
+const noTitle = selectCreativeTitle({
+  request: { requestId: "title-off", targetPlatforms: ["instagram"] },
+  platform: "instagram",
+  titleRequired: false,
+  candidates: [],
+});
+assert.equal(noTitle.selected, null);
+assert.equal(noTitle.policy.noForcedTitle, true);
+
+assert.throws(
+  () =>
+    selectCreativeTitle({
+      request: { requestId: "title-off-bad", targetPlatforms: ["instagram"] },
+      platform: "instagram",
+      titleRequired: false,
+      candidates: [{
+        id: "should-not-exist",
+        platform: "instagram",
+        text: "Forced title",
+        angle: "FORCED",
+        noveltyScore: 1,
+        firstImpactScore: 1,
+        clarityScore: 1,
+        relevanceScore: 1,
+        platformFitScore: 1,
+        truthSafetyScore: 1,
+        curiosityScore: 1,
+        repetitionRiskScore: 0,
+        clickbaitRiskScore: 0,
+      }],
+    }),
+  /must not be produced/,
+);
+
+assert.equal(scoreCreativeTitle({
+  noveltyScore: 1,
+  firstImpactScore: 1,
+  clarityScore: 1,
+  relevanceScore: 1,
+  platformFitScore: 1,
+  truthSafetyScore: 1,
+  curiosityScore: 1,
+  repetitionRiskScore: 0,
+  clickbaitRiskScore: 0,
 }), 1);
