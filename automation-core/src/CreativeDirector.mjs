@@ -31,6 +31,33 @@ function freezeArray(values = []) {
   ));
 }
 
+function assertRequestedPlatformsOnly(targetPlatforms, items, label) {
+  const requested = new Set(targetPlatforms);
+  const seen = new Set();
+
+  for (const item of items || []) {
+    const platform = requireString(item?.platform, `${label}.platform`);
+    if (!SUPPORTED_PLATFORMS.has(platform)) {
+      throw new Error(`Unsupported social platform in ${label}: ${platform}`);
+    }
+    if (!requested.has(platform)) {
+      throw new Error(
+        `Unrequested platform work is forbidden: ${platform} appears in ${label}`,
+      );
+    }
+    if (seen.has(platform)) {
+      throw new Error(`Duplicate ${label} entry for requested platform: ${platform}`);
+    }
+    seen.add(platform);
+  }
+
+  for (const platform of targetPlatforms) {
+    if (!seen.has(platform)) {
+      throw new Error(`Missing ${label} for requested platform: ${platform}`);
+    }
+  }
+}
+
 export function requestNeedsFreshContext(request) {
   return Boolean(
     request.latestNews === true ||
@@ -185,6 +212,10 @@ export function createCreativeExecutionSpec({
   }
 
   const verifiedResearch = validateResearchBundle(request, researchBundle);
+
+  assertRequestedPlatformsOnly(targetPlatforms, platformAnalyses || [], "platform analysis");
+  assertRequestedPlatformsOnly(targetPlatforms, storyPlans || [], "story plan");
+
   const analyses = new Map((platformAnalyses || []).map((item) => [item.platform, item]));
   const plans = new Map((storyPlans || []).map((item) => [item.platform, item]));
 
@@ -243,6 +274,14 @@ export function createCreativeExecutionSpec({
     trendSensitive: request.trendSensitive === true,
     research: verifiedResearch,
     targetPlatforms: Object.freeze(targetPlatforms),
+    platformScopePolicy: Object.freeze({
+      requestedPlatformsOnly: true,
+      autoExpandPlatforms: false,
+      unrequestedPlatformAnalysisForbidden: true,
+      unrequestedPlatformStoryForbidden: true,
+      unrequestedPlatformProductionForbidden: true,
+      unrequestedPlatformPublishingForbidden: true,
+    }),
     platformStories: Object.freeze(platformStories),
     locked: true,
   });
