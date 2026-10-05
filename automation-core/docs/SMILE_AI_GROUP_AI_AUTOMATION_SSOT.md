@@ -127,3 +127,84 @@ Other SMILE AI GROUP services may use the same core with their own service-speci
 6. Only successful verified modules enter the Golden Registry.
 7. Execution is idempotent and checkpointed.
 8. Service-specific assets never redefine ownership of the group automation core.
+
+
+## Creative Director and fresh-context story planning
+
+SMILE AI GROUP owns the central **AI Creative Director / Golden Pipeline Orchestrator** for customer automation.
+
+For each member request, the system must determine whether the result depends on current facts, latest news, market conditions, local information, or current social-platform behavior. When freshness matters, the request is not allowed to proceed from model memory or an old script alone.
+
+The planning sequence is:
+
+```text
+member request
+→ full intent / audience / country / language / platform analysis
+→ latest news / latest information research when relevant
+→ claim and fact verification
+→ per-platform social analysis
+→ per-platform story creation
+→ explicit creative decisions
+→ current verified Success Baseline resolution
+→ Golden Module composition
+→ execution-plan lock
+→ production
+→ QC against the current success baseline
+→ delivery / publishing
+```
+
+### Per-platform story rule
+
+TikTok, Instagram, YouTube and Facebook are analyzed separately.
+
+A single generic script translated or reordered across all social platforms is not the default production model. Each target platform receives its own hook, story beats, duration, information density, CTA, title treatment, subtitle treatment and publishing-oriented visual structure according to the member's request and current platform evidence.
+
+### Explicit creative decisions
+
+The Creative Director must explicitly decide, rather than blindly applying one template:
+
+- whether a title is useful;
+- title wording, font role, size strategy, color / accent strategy;
+- whether a title or topic container is useful;
+- whether the container uses measured auto-width, full band, no box, or another verified pattern;
+- whether subtitles are required;
+- subtitle language, size, timing and active-word / phrase behavior;
+- whether narration / voice is required;
+- whether music is required and its role relative to speech / original audio;
+- scene labels, transitions, thumbnail / cover and CTA;
+- story structure and scene ordering.
+
+Every technique actually used in production must be backed by a verified Golden Module and the current matching Success Baseline.
+
+### Latest-success baseline policy
+
+Success is scoped by content type, capability, platform, language, country and service scope.
+
+A new method, font treatment, title layout, subtitle method, story pattern, voice treatment, music treatment, render method or QC method does **not** become customer production merely because it is newer.
+
+Promotion requires:
+
+```text
+internal experiment
+→ successful render / execution
+→ QC PASS
+→ real-use success evidence
+→ side-by-side / benchmark comparison with the current baseline
+→ verified promotion
+```
+
+If the candidate is better and verified, it becomes the new ACTIVE Success Baseline for that exact scope. The previous baseline is marked SUPERSEDED for that scope and remains auditable. A previous method may remain ACTIVE in another scope where it is still the better verified choice.
+
+Failed, unverified, merely experimental, or quality-regressed methods never become customer production paths.
+
+### Fresh research evidence
+
+Requests that depend on latest news, current information or current trends require a verified research bundle with source references and timestamps. Evidence freshness is part of the execution contract. Stale evidence blocks the fresh-context request rather than silently falling back to an old story.
+
+### Character and voice rights boundary
+
+Customer production may use only customer-owned / customer-licensed assets or assets explicitly provisioned for customer use.
+
+SMILE AI GROUP internal characters, internal voices and service identities are never exposed as customer-selectable assets.
+
+MISO character / MISO Voice Master are used only for MISO-owned media or another explicitly authorized internal SMILE AI GROUP workflow. MISO remains a consumer of the group automation core, not the owner of customer automation.
