@@ -276,3 +276,37 @@ The system must create a deliberate first-impact decision for the opening second
 Large text, narration, music, title boxes and subtitles are never mandatory merely because they worked in another content class. They are selected only when they fit the member's requested result, available assets, target platform, current evidence and verified success method.
 
 Recent duplicate or near-duplicate concepts should be penalized or rejected so that repeated production does not become visually or narratively stale.
+
+
+### Creative title policy
+
+When a title is useful for the requested result, title wording is itself a creative output and must not be treated as a fixed template field.
+
+The Creative Director should create multiple title candidates for the requested platform and evaluate them for:
+
+- novelty;
+- immediate impact;
+- clarity;
+- relevance to the actual story;
+- requested-platform fit;
+- truth / claim safety;
+- curiosity;
+- similarity to the member's recent titles;
+- misleading clickbait risk.
+
+The selected title should feel fresh and make the viewer want to continue, but it must still match the actual video and verified facts.
+
+Generic repeated patterns such as "3 reasons you must visit", "you will be shocked", or other overused structures should be penalized when a stronger original angle is available.
+
+Title creativity and title visual treatment are separate decisions:
+
+```text
+creative title wording
+→ title novelty / impact / truth / repetition gate
+→ selected title
+→ VERIFIED font / size / color / accent / box / auto-width method
+```
+
+A creative title never authorizes an unverified font or layout method.
+
+A title is also not mandatory. If the selected story is stronger without a title, the Creative Director may explicitly set title usage to false, and the production system must not force one in.
