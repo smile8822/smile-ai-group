@@ -127,3 +127,186 @@ Other SMILE AI GROUP services may use the same core with their own service-speci
 6. Only successful verified modules enter the Golden Registry.
 7. Execution is idempotent and checkpointed.
 8. Service-specific assets never redefine ownership of the group automation core.
+
+
+## Creative Director and fresh-context story planning
+
+SMILE AI GROUP owns the central **AI Creative Director / Golden Pipeline Orchestrator** for customer automation.
+
+For each member request, the system must determine whether the result depends on current facts, latest news, market conditions, local information, or current social-platform behavior. When freshness matters, the request is not allowed to proceed from model memory or an old script alone.
+
+The planning sequence is:
+
+```text
+member request
+→ full intent / audience / country / language / platform analysis
+→ latest news / latest information research when relevant
+→ claim and fact verification
+→ per-platform social analysis
+→ per-platform story creation
+→ explicit creative decisions
+→ current verified Success Baseline resolution
+→ Golden Module composition
+→ execution-plan lock
+→ production
+→ QC against the current success baseline
+→ delivery / publishing
+```
+
+### Per-platform story rule
+
+TikTok, Instagram, YouTube and Facebook are analyzed separately.
+
+A single generic script translated or reordered across all social platforms is not the default production model. Each target platform receives its own hook, story beats, duration, information density, CTA, title treatment, subtitle treatment and publishing-oriented visual structure according to the member's request and current platform evidence.
+
+### Explicit creative decisions
+
+The Creative Director must explicitly decide, rather than blindly applying one template:
+
+- whether a title is useful;
+- title wording, font role, size strategy, color / accent strategy;
+- whether a title or topic container is useful;
+- whether the container uses measured auto-width, full band, no box, or another verified pattern;
+- whether subtitles are required;
+- subtitle language, size, timing and active-word / phrase behavior;
+- whether narration / voice is required;
+- whether music is required and its role relative to speech / original audio;
+- scene labels, transitions, thumbnail / cover and CTA;
+- story structure and scene ordering.
+
+Every technique actually used in production must be backed by a verified Golden Module and the current matching Success Baseline.
+
+### Latest-success baseline policy
+
+Success is scoped by content type, capability, platform, language, country and service scope.
+
+A new method, font treatment, title layout, subtitle method, story pattern, voice treatment, music treatment, render method or QC method does **not** become customer production merely because it is newer.
+
+Promotion requires:
+
+```text
+internal experiment
+→ successful render / execution
+→ QC PASS
+→ real-use success evidence
+→ side-by-side / benchmark comparison with the current baseline
+→ verified promotion
+```
+
+If the candidate is better and verified, it becomes the new ACTIVE Success Baseline for that exact scope. The previous baseline is marked SUPERSEDED for that scope and remains auditable. A previous method may remain ACTIVE in another scope where it is still the better verified choice.
+
+Failed, unverified, merely experimental, or quality-regressed methods never become customer production paths.
+
+### Fresh research evidence
+
+Requests that depend on latest news, current information or current trends require a verified research bundle with source references and timestamps. Evidence freshness is part of the execution contract. Stale evidence blocks the fresh-context request rather than silently falling back to an old story.
+
+### Character and voice rights boundary
+
+Customer production may use only customer-owned / customer-licensed assets or assets explicitly provisioned for customer use.
+
+SMILE AI GROUP internal characters, internal voices and service identities are never exposed as customer-selectable assets.
+
+MISO character / MISO Voice Master are used only for MISO-owned media or another explicitly authorized internal SMILE AI GROUP workflow. MISO remains a consumer of the group automation core, not the owner of customer automation.
+
+
+### Requested-platform-only execution
+
+The member's requested platform set is authoritative.
+
+Examples:
+
+- YouTube only → analyze, script, produce, QC and publish YouTube only.
+- TikTok only → analyze, script, produce, QC and publish TikTok only.
+- Instagram + TikTok → produce exactly those two only.
+- All supported SNS → only when the member explicitly requests all supported SNS.
+
+The automation must never expand a request to additional platforms merely because the source asset could be reused there.
+
+For every job:
+
+```text
+requestedPlatforms
+= analyzedPlatforms
+= storyPlannedPlatforms
+= productionPlatforms
+= QCPlatforms
+= publishPlatforms
+```
+
+Any unrequested platform analysis, story plan, render, upload, schedule or publish action is forbidden.
+
+The system may suggest that another platform could be useful, but it must not create or publish that additional deliverable unless the member explicitly adds it to the request.
+
+
+### Creative ideation and first-impact policy
+
+The automation must not reduce creative work to repeating the latest successful template.
+
+For every eligible request, the Creative Director may generate multiple new content premises using the member's actual business, product/service, available assets, current context, audience, location/market and requested platform.
+
+Creative direction may differ by purpose, including:
+
+- emotional / human story;
+- fun / comedic;
+- surprise / reveal;
+- informational;
+- trust / proof;
+- premium / sensory;
+- relatable / everyday;
+- participatory / comment-driven;
+- live-scene / current-event;
+- before-and-after.
+
+Idea generation and production technique are separate concerns.
+
+```text
+new idea / hook / story angle
+→ novelty + first-impact + audience/platform fit scoring
+→ repetition check against recent concepts
+→ truth / feasibility check
+→ select best eligible idea
+→ bind only VERIFIED Golden production methods
+```
+
+A new story idea is allowed to be novel. An unverified font method, subtitle method, voice method, editing technique, render path or publishing path is not.
+
+The system must create a deliberate first-impact decision for the opening seconds. Depending on the material and tone, the best opening may be a human emotion, reaction, live scene, verified fact, before/after reveal, sensory close-up, question or promise.
+
+Large text, narration, music, title boxes and subtitles are never mandatory merely because they worked in another content class. They are selected only when they fit the member's requested result, available assets, target platform, current evidence and verified success method.
+
+Recent duplicate or near-duplicate concepts should be penalized or rejected so that repeated production does not become visually or narratively stale.
+
+
+### Creative title policy
+
+When a title is useful for the requested result, title wording is itself a creative output and must not be treated as a fixed template field.
+
+The Creative Director should create multiple title candidates for the requested platform and evaluate them for:
+
+- novelty;
+- immediate impact;
+- clarity;
+- relevance to the actual story;
+- requested-platform fit;
+- truth / claim safety;
+- curiosity;
+- similarity to the member's recent titles;
+- misleading clickbait risk.
+
+The selected title should feel fresh and make the viewer want to continue, but it must still match the actual video and verified facts.
+
+Generic repeated patterns such as "3 reasons you must visit", "you will be shocked", or other overused structures should be penalized when a stronger original angle is available.
+
+Title creativity and title visual treatment are separate decisions:
+
+```text
+creative title wording
+→ title novelty / impact / truth / repetition gate
+→ selected title
+→ VERIFIED font / size / color / accent / box / auto-width method
+```
+
+A creative title never authorizes an unverified font or layout method.
+
+A title is also not mandatory. If the selected story is stronger without a title, the Creative Director may explicitly set title usage to false, and the production system must not force one in.
