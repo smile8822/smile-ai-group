@@ -32,6 +32,143 @@ function freezeArray(values = []) {
   ));
 }
 
+export function scoreCreativeTitle(title) {
+  const novelty = finiteScore(title.noveltyScore, "title.noveltyScore");
+  const firstImpact = finiteScore(title.firstImpactScore, "title.firstImpactScore");
+  const clarity = finiteScore(title.clarityScore, "title.clarityScore");
+  const relevance = finiteScore(title.relevanceScore, "title.relevanceScore");
+  const platformFit = finiteScore(title.platformFitScore, "title.platformFitScore");
+  const truthSafety = finiteScore(title.truthSafetyScore, "title.truthSafetyScore");
+  const curiosity = finiteScore(title.curiosityScore, "title.curiosityScore");
+  const repetitionRisk = finiteScore(title.repetitionRiskScore, "title.repetitionRiskScore");
+  const clickbaitRisk = finiteScore(title.clickbaitRiskScore, "title.clickbaitRiskScore");
+
+  const score =
+    novelty * 0.20 +
+    firstImpact * 0.18 +
+    clarity * 0.14 +
+    relevance * 0.16 +
+    platformFit * 0.12 +
+    truthSafety * 0.12 +
+    curiosity * 0.08 -
+    repetitionRisk * 0.16 -
+    clickbaitRisk * 0.18;
+
+  return Math.max(0, Math.min(1, Number(score.toFixed(4))));
+}
+
+function validateTitleCandidate(candidate, request, platform) {
+  const id = requireString(candidate.id, "title.id");
+  const text = requireString(candidate.text, "title.text");
+  const candidatePlatform = requireString(candidate.platform, "title.platform");
+
+  if (candidatePlatform !== platform) {
+    throw new Error(`Title ${id} platform mismatch: expected ${platform}, got ${candidatePlatform}`);
+  }
+  if (!(request.targetPlatforms || []).includes(candidatePlatform)) {
+    throw new Error(`Title ${id} targets unrequested platform: ${candidatePlatform}`);
+  }
+
+  const angle = requireString(candidate.angle, "title.angle");
+  const score = scoreCreativeTitle(candidate);
+
+  return Object.freeze({
+    id,
+    platform: candidatePlatform,
+    text,
+    angle,
+    evidenceRefs: Object.freeze([...(candidate.evidenceRefs || [])]),
+    noveltyScore: Number(candidate.noveltyScore),
+    firstImpactScore: Number(candidate.firstImpactScore),
+    clarityScore: Number(candidate.clarityScore),
+    relevanceScore: Number(candidate.relevanceScore),
+    platformFitScore: Number(candidate.platformFitScore),
+    truthSafetyScore: Number(candidate.truthSafetyScore),
+    curiosityScore: Number(candidate.curiosityScore),
+    repetitionRiskScore: Number(candidate.repetitionRiskScore),
+    clickbaitRiskScore: Number(candidate.clickbaitRiskScore),
+    compositeScore: score,
+  });
+}
+
+export function selectCreativeTitle({
+  request,
+  platform,
+  titleRequired,
+  candidates = [],
+  minimumScore = 0.64,
+  maximumRepetitionRisk = 0.45,
+  maximumClickbaitRisk = 0.35,
+}) {
+  requireString(platform, "platform");
+
+  if (titleRequired === false) {
+    if (candidates.length > 0) {
+      throw new Error("Title candidates must not be produced when the creative decision says no title.");
+    }
+    return Object.freeze({
+      owner: "SMILE_AI_GROUP",
+      platform,
+      titleRequired: false,
+      selected: null,
+      alternatives: Object.freeze([]),
+      policy: Object.freeze({
+        titleIsOptionalByCreativeDecision: true,
+        noForcedTitle: true,
+      }),
+    });
+  }
+
+  if (titleRequired !== true) {
+    throw new Error("titleRequired must be explicitly true or false");
+  }
+
+  if (!Array.isArray(candidates) || candidates.length < 2) {
+    throw new Error("Creative title selection requires at least two candidates.");
+  }
+
+  const validated = candidates.map((candidate) =>
+    validateTitleCandidate(candidate, request, platform),
+  );
+
+  const eligible = validated
+    .filter((candidate) => candidate.compositeScore >= minimumScore)
+    .filter((candidate) => candidate.repetitionRiskScore <= maximumRepetitionRisk)
+    .filter((candidate) => candidate.clickbaitRiskScore <= maximumClickbaitRisk)
+    .sort((a, b) => {
+      if (a.compositeScore !== b.compositeScore) {
+        return b.compositeScore - a.compositeScore;
+      }
+      if (a.firstImpactScore !== b.firstImpactScore) {
+        return b.firstImpactScore - a.firstImpactScore;
+      }
+      return a.id.localeCompare(b.id);
+    });
+
+  if (eligible.length === 0) {
+    throw new Error("No title passed novelty, impact, clarity, truth and anti-clickbait gates.");
+  }
+
+  return Object.freeze({
+    owner: "SMILE_AI_GROUP",
+    platform,
+    titleRequired: true,
+    selected: eligible[0],
+    alternatives: Object.freeze(eligible.slice(1, 4)),
+    rejectedCount: validated.length - eligible.length,
+    policy: Object.freeze({
+      platformSpecific: true,
+      noveltyRequired: true,
+      firstImpactRequired: true,
+      clarityRequired: true,
+      truthRequired: true,
+      curiosityAllowedWithoutMisleadingClickbait: true,
+      repetitiveRecentTitlesBlocked: true,
+      titleWordingIndependentFromVisualTreatment: true,
+    }),
+  });
+}
+
 export function scoreCreativeIdea(idea) {
   const freshness = finiteScore(idea.freshnessScore, "freshnessScore");
   const firstImpact = finiteScore(idea.firstImpactScore, "firstImpactScore");
