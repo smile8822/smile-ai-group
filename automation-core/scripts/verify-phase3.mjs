@@ -205,6 +205,88 @@ assert.equal(spec.locked, true);
 assert.equal(spec.research.items.length, 1);
 assert.equal(spec.platformStories[0].creativeDecisions.subtitle.required, true);
 assert.equal(spec.platformStories[0].creativeDecisions.voice.assetPolicy, "CUSTOMER_ALLOWED_ONLY");
+assert.equal(spec.platformScopePolicy.requestedPlatformsOnly, true);
+assert.equal(spec.platformScopePolicy.autoExpandPlatforms, false);
+
+// A YouTube-only request must create only YouTube work.
+const youtubeOnly = createCreativeExecutionSpec({
+  request: {
+    requestId: "request-youtube-only",
+    tenantId: "customer-002",
+    objective: "Create only a YouTube video.",
+    targetPlatforms: ["youtube"],
+  },
+  platformAnalyses: [{
+    platform: "youtube",
+    analyzedAt: "2026-10-05T09:00:00Z",
+    audienceFit: "Search and watch intent.",
+    storyStrategy: "YouTube-specific story.",
+  }],
+  storyPlans: [{
+    platform: "youtube",
+    hook: "YouTube hook",
+    script: "YouTube-only script.",
+    storyBeats: [{ order: 1, role: "HOOK" }],
+    creativeDecisions: {
+      title: { enabled: true, fontRole: "VERIFIED", colorStrategy: "VERIFIED", boxMode: "VERIFIED", widthMode: "VERIFIED" },
+      subtitle: { required: false },
+      voice: { required: false },
+      music: { required: false },
+    },
+    goldenBindings: [
+      { decisionArea: "STORY", moduleId: "STORY_YT", moduleVersion: "1.0.0", baselineId: "STORY_YT_BASE" },
+      { decisionArea: "VISUAL_LAYOUT", moduleId: "LAYOUT_YT", moduleVersion: "1.0.0", baselineId: "LAYOUT_YT_BASE" },
+      { decisionArea: "QC", moduleId: "QC_YT", moduleVersion: "1.0.0", baselineId: "QC_YT_BASE" },
+    ],
+  }],
+});
+assert.deepEqual(youtubeOnly.targetPlatforms, ["youtube"]);
+assert.deepEqual(youtubeOnly.platformStories.map((item) => item.platform), ["youtube"]);
+
+// A TikTok-only request must reject accidental Instagram work.
+assert.throws(
+  () =>
+    createCreativeExecutionSpec({
+      request: {
+        requestId: "request-tiktok-only",
+        tenantId: "customer-003",
+        objective: "Create only TikTok.",
+        targetPlatforms: ["tiktok"],
+      },
+      platformAnalyses: [
+        {
+          platform: "tiktok",
+          analyzedAt: "2026-10-05T09:00:00Z",
+          audienceFit: "TikTok audience.",
+          storyStrategy: "TikTok story.",
+        },
+        {
+          platform: "instagram",
+          analyzedAt: "2026-10-05T09:00:00Z",
+          audienceFit: "Should never run.",
+          storyStrategy: "Unrequested.",
+        },
+      ],
+      storyPlans: [{
+        platform: "tiktok",
+        hook: "TikTok hook",
+        script: "TikTok script.",
+        storyBeats: [{ order: 1, role: "HOOK" }],
+        creativeDecisions: {
+          title: { enabled: false },
+          subtitle: { required: false },
+          voice: { required: false },
+          music: { required: false },
+        },
+        goldenBindings: [
+          { decisionArea: "STORY", moduleId: "STORY_TT", moduleVersion: "1.0.0", baselineId: "STORY_TT_BASE" },
+          { decisionArea: "VISUAL_LAYOUT", moduleId: "LAYOUT_TT", moduleVersion: "1.0.0", baselineId: "LAYOUT_TT_BASE" },
+          { decisionArea: "QC", moduleId: "QC_TT", moduleVersion: "1.0.0", baselineId: "QC_TT_BASE" },
+        ],
+      }],
+    }),
+  /Unrequested platform work is forbidden: instagram/,
+);
 
 assert.throws(
   () =>
