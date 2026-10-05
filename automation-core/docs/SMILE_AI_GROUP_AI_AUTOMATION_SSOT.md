@@ -208,3 +208,32 @@ Customer production may use only customer-owned / customer-licensed assets or as
 SMILE AI GROUP internal characters, internal voices and service identities are never exposed as customer-selectable assets.
 
 MISO character / MISO Voice Master are used only for MISO-owned media or another explicitly authorized internal SMILE AI GROUP workflow. MISO remains a consumer of the group automation core, not the owner of customer automation.
+
+
+### Requested-platform-only execution
+
+The member's requested platform set is authoritative.
+
+Examples:
+
+- YouTube only → analyze, script, produce, QC and publish YouTube only.
+- TikTok only → analyze, script, produce, QC and publish TikTok only.
+- Instagram + TikTok → produce exactly those two only.
+- All supported SNS → only when the member explicitly requests all supported SNS.
+
+The automation must never expand a request to additional platforms merely because the source asset could be reused there.
+
+For every job:
+
+```text
+requestedPlatforms
+= analyzedPlatforms
+= storyPlannedPlatforms
+= productionPlatforms
+= QCPlatforms
+= publishPlatforms
+```
+
+Any unrequested platform analysis, story plan, render, upload, schedule or publish action is forbidden.
+
+The system may suggest that another platform could be useful, but it must not create or publish that additional deliverable unless the member explicitly adds it to the request.
