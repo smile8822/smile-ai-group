@@ -12,6 +12,11 @@ import {
   createCreativeExecutionSpec,
   requestNeedsFreshContext,
 } from "../src/CreativeDirector.mjs";
+import {
+  buildFirstImpactDecision,
+  scoreCreativeIdea,
+  selectCreativeIdea,
+} from "../src/CreativeIdeationEngine.mjs";
 
 clearSuccessBaselineRegistryForTests();
 
@@ -323,3 +328,94 @@ console.log(JSON.stringify({
   platformStories: spec.platformStories.length,
   freshResearchItems: spec.research.items.length,
 }, null, 2));
+
+const ideaRequest = {
+  requestId: "creative-idea-001",
+  targetPlatforms: ["tiktok"],
+};
+
+const ideaSelection = selectCreativeIdea({
+  request: ideaRequest,
+  ideas: [
+    {
+      id: "idea-emotional",
+      platform: "tiktok",
+      tone: "EMOTIONAL",
+      hook: "Open on the owner preparing the shop before sunrise.",
+      premise: "Show the human routine behind a familiar local business.",
+      sourceStrategy: "CUSTOMER_ASSET_ONLY",
+      emotionalTarget: "warmth and respect",
+      storyBeats: [{ order: 1, role: "HUMAN_HOOK" }, { order: 2, role: "PROCESS" }],
+      freshnessScore: 0.90,
+      firstImpactScore: 0.82,
+      audienceFitScore: 0.88,
+      platformFitScore: 0.90,
+      feasibilityScore: 0.92,
+      truthSafetyScore: 0.98,
+      repetitionRiskScore: 0.12,
+    },
+    {
+      id: "idea-generic",
+      platform: "tiktok",
+      tone: "INFORMATIONAL",
+      hook: "Here are three reasons to visit.",
+      premise: "Generic list.",
+      sourceStrategy: "CUSTOMER_ASSET_ONLY",
+      emotionalTarget: "interest",
+      storyBeats: [{ order: 1, role: "LIST" }],
+      freshnessScore: 0.30,
+      firstImpactScore: 0.45,
+      audienceFitScore: 0.70,
+      platformFitScore: 0.65,
+      feasibilityScore: 0.95,
+      truthSafetyScore: 0.98,
+      repetitionRiskScore: 0.80,
+    },
+  ],
+});
+assert.equal(ideaSelection.selected.id, "idea-emotional");
+assert.equal(ideaSelection.policy.repetitiveRecentConceptsBlocked, true);
+
+assert.throws(
+  () =>
+    selectCreativeIdea({
+      request: { requestId: "only-youtube", targetPlatforms: ["youtube"] },
+      ideas: [{
+        id: "wrong-platform",
+        platform: "tiktok",
+        tone: "FUN",
+        hook: "Hook",
+        premise: "Premise",
+        sourceStrategy: "CUSTOMER_ASSET_ONLY",
+        emotionalTarget: "fun",
+        storyBeats: [{ order: 1, role: "HOOK" }],
+        freshnessScore: 0.9,
+        firstImpactScore: 0.9,
+        audienceFitScore: 0.9,
+        platformFitScore: 0.9,
+        feasibilityScore: 0.9,
+        truthSafetyScore: 0.9,
+        repetitionRiskScore: 0.1,
+      }],
+    }),
+  /unrequested platform/,
+);
+
+const impact = buildFirstImpactDecision({
+  platform: "instagram",
+  tone: "PREMIUM",
+  availableEvidence: [],
+  availableAssets: [{ kind: "SENSORY_DETAIL" }],
+});
+assert.equal(impact.hookMode, "SENSORY_DETAIL_FIRST");
+assert.equal(impact.noForcedLargeText, true);
+assert.equal(impact.noForcedMusic, true);
+assert.equal(scoreCreativeIdea({
+  freshnessScore: 1,
+  firstImpactScore: 1,
+  audienceFitScore: 1,
+  platformFitScore: 1,
+  feasibilityScore: 1,
+  truthSafetyScore: 1,
+  repetitionRiskScore: 0,
+}), 1);
