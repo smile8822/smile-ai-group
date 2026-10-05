@@ -237,3 +237,42 @@ requestedPlatforms
 Any unrequested platform analysis, story plan, render, upload, schedule or publish action is forbidden.
 
 The system may suggest that another platform could be useful, but it must not create or publish that additional deliverable unless the member explicitly adds it to the request.
+
+
+### Creative ideation and first-impact policy
+
+The automation must not reduce creative work to repeating the latest successful template.
+
+For every eligible request, the Creative Director may generate multiple new content premises using the member's actual business, product/service, available assets, current context, audience, location/market and requested platform.
+
+Creative direction may differ by purpose, including:
+
+- emotional / human story;
+- fun / comedic;
+- surprise / reveal;
+- informational;
+- trust / proof;
+- premium / sensory;
+- relatable / everyday;
+- participatory / comment-driven;
+- live-scene / current-event;
+- before-and-after.
+
+Idea generation and production technique are separate concerns.
+
+```text
+new idea / hook / story angle
+→ novelty + first-impact + audience/platform fit scoring
+→ repetition check against recent concepts
+→ truth / feasibility check
+→ select best eligible idea
+→ bind only VERIFIED Golden production methods
+```
+
+A new story idea is allowed to be novel. An unverified font method, subtitle method, voice method, editing technique, render path or publishing path is not.
+
+The system must create a deliberate first-impact decision for the opening seconds. Depending on the material and tone, the best opening may be a human emotion, reaction, live scene, verified fact, before/after reveal, sensory close-up, question or promise.
+
+Large text, narration, music, title boxes and subtitles are never mandatory merely because they worked in another content class. They are selected only when they fit the member's requested result, available assets, target platform, current evidence and verified success method.
+
+Recent duplicate or near-duplicate concepts should be penalized or rejected so that repeated production does not become visually or narratively stale.
