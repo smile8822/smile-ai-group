@@ -3,6 +3,7 @@ name: SMILE AI Automation Core Verify
 on:
   push:
     branches:
+      - main
       - feature/ai-automation-core-large-media-20261005
     paths:
       - "automation-core/**"
