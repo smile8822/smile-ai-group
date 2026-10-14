@@ -24,6 +24,8 @@ jobs:
           node --check server.mjs
           node --check jobs.mjs
           node --check qc-worker.mjs
+          node --check storage.mjs
+          node --check mirror-worker.mjs
           node --check assemble.mjs
           node --check public/capture.js
       - name: Automated tests
