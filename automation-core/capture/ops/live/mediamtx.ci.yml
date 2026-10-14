@@ -1,0 +1,30 @@
+# Test-only plain RTMP: Docker must publish on 127.0.0.1 exclusively.
+logLevel: warn
+api: false
+metrics: false
+pprof: false
+rtsp: false
+hls: false
+webrtc: false
+srt: false
+playback: false
+rtmp: true
+rtmpEncryption: 'no'
+rtmpAddress: :1935
+authMethod: internal
+authInternalUsers:
+  - user: publisher
+    pass: CI_LOCAL_ONLY_DO_NOT_DEPLOY
+    ips: []
+    permissions:
+      - action: publish
+        path: live
+paths:
+  live:
+    source: publisher
+    record: true
+    recordPath: /recordings/%path/%Y-%m-%d_%H-%M-%S-%f
+    recordFormat: fmp4
+    recordPartDuration: 1s
+    recordSegmentDuration: 2s
+    recordDeleteAfter: 0s
