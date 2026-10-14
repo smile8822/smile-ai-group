@@ -49,3 +49,25 @@ The browser has constraints: Android lock-screen, OS background suspension, unex
 - Add KAIO scheduler job kinds `SAME_DAY_CAPTURE` (high priority) and `ARCHIVE_REPAIR` (separate low-priority queue), dead-letter, checkpoint, alerts.
 - Integrate LIVE ingest/RTMP only after platform eligibility check and hardware live test.
 - Require human review for recognizable children or other protected content before public distribution.
+
+## 2026-10-14 staged reliability improvements (V2)
+
+**Transport integrity:** The receiver now requires `expectedChunks` in the finalization request. A missing last or middle fragment cannot be silently treated as complete. Repeated finalization uses the same count idempotently. Hash and file-size validation remain mandatory.
+
+**Browser offline spool:** IndexedDB V2 stores per-session metadata separately from chunk blobs. A lost connection or a failed historical segment no longer blocks all later sessions. Upload retry runs on reconnection, after new parts, periodically, and by button. The browser only asks the server to finalize after its own number of persisted parts has been successfully transferred. Browser crashes or missing local chunks **are not automatically declared complete**. The recording page still must remain in the foreground for reliable camera capture; true background recording requires a separate native mobile application.
+
+**Daily work isolation:** New `jobs.mjs` creates independent `SAME_DAY_CAPTURE` and `ARCHIVE_REPAIR` queues. Each completed daily source is registered for downstream QC; queue records have `qcStatus: NOT_VERIFIED` and `publishAllowed: false`. Startup reconciliation repairs a crash between source finalization and queue registration; claimed jobs are not duplicated. **This is queue plumbing, not an operating KAIO video editor or a publishing service.** Worker deployment, job leases/stale job reaping, FFmpeg media QC and KAIO integration remain necessary.
+
+**Verification:** Five Node automated tests are passing, including 120 sequential media fragments while an older recording remains stalled and required end-count integrity. The local Chromium camera E2E attempt was blocked by the execution environment's administrator policy (`ERR_BLOCKED_BY_ADMINISTRATOR` when visiting localhost). **No real Android, HTTPS remote endpoint, prolonged full-quality recording, network dropout field test, or TikTok simultaneous stream test has passed yet.**
+
+**Deployment gate:** Do not point this disk-backed proof-of-concept at the existing 80-GB MISO staging server for sustained footage. A dedicated HTTPS staging host, private object storage, rate limits, real health/space monitoring and a media processing worker must be provisioned and validated before internal daily use. The code/PR do not change the existing 10/11 Drive original, cache, previously approved media or booked SNS posts.
+
+Run checks:
+
+```bash
+node --check server.mjs
+node --check jobs.mjs
+node --check assemble.mjs
+node --check public/capture.js
+npm test
+```
