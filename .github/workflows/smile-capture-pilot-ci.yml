@@ -23,6 +23,7 @@ jobs:
         run: |
           node --check server.mjs
           node --check jobs.mjs
+          node --check qc-worker.mjs
           node --check assemble.mjs
           node --check public/capture.js
       - name: Automated tests
