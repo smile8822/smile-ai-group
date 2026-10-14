@@ -1,7 +1,7 @@
 import { createServer } from 'node:http';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
-import { mkdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, rm, stat, statfs, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import { Transform } from 'node:stream';
@@ -40,10 +40,15 @@ async function atomicJson(path, value) {
   finally { await rm(temp, { force: true }).catch(() => {}); }
 }
 
-export function createCaptureServer({ root, token, maxChunkBytes = 100 * 1024 * 1024, maxSessionBytes = 40 * 1024 * 1024 * 1024 } = {}) {
+export function createCaptureServer({ root, token, maxChunkBytes = 100 * 1024 * 1024, maxSessionBytes = 40 * 1024 * 1024 * 1024, minFreeBytes = 2 * 1024 * 1024 * 1024 } = {}) {
   if (!root || !token || String(token).length < 24) throw new Error('CAPTURE_ROOT and strong CAPTURE_TOKEN (24+ chars) required');
+  if (!Number.isSafeInteger(minFreeBytes) || minFreeBytes < 0) throw new Error('Invalid minimum disk reserve');
   const locks = new Map();
   const sessionsDir = join(root, 'sessions');
+  async function guardDisk(additionalBytes = 0) {
+    const available = await statfs(sessionsDir);
+    if (available.bavail * available.bsize < minFreeBytes + additionalBytes) fail(507, 'Receiver disk capacity below reserved threshold');
+  }
   const withLock = async (id, fn) => {
     const previous = locks.get(id) || Promise.resolve();
     const next = previous.catch(() => {}).then(fn);
@@ -73,6 +78,7 @@ export function createCaptureServer({ root, token, maxChunkBytes = 100 * 1024 * 
       if (req.method === 'POST' && pathname === '/api/sessions') {
         const body = await readJson(req);
         if (!['camera', 'external-live-archive'].includes(body?.kind)) fail(400, 'Unsupported source kind');
+        await guardDisk();
         const id = randomUUID(); const dir = join(sessionsDir, id);
         await mkdir(dir, { recursive: false, mode: 0o700 });
         const now = new Date().toISOString();
@@ -118,6 +124,7 @@ export function createCaptureServer({ root, token, maxChunkBytes = 100 * 1024 * 
           }
           if (manifest.status !== 'RECORDING') fail(409, 'Session closed');
           if (manifest.bytesReceived + length > maxSessionBytes) fail(413, 'Session quota exceeded');
+          await guardDisk(length);
           const path = join(sessionsDir, id, `${String(index).padStart(7, '0')}.chunk`);
           const temp = `${path}.${randomUUID()}.tmp`;
           let received = 0; const hash = createHash('sha256');
@@ -157,7 +164,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const token = process.env.CAPTURE_TOKEN;
   const host = process.env.CAPTURE_HOST || '127.0.0.1';
   const port = Number(process.env.CAPTURE_PORT || '8787');
-  const app = createCaptureServer({ root, token });
+  const app = createCaptureServer({ root, token, minFreeBytes: Number(process.env.CAPTURE_MIN_FREE_BYTES ?? 2 * 1024 * 1024 * 1024) });
   await app.init();
   app.server.listen(port, host, () => console.log(`Capture server listening on ${host}:${port}`));
 }
