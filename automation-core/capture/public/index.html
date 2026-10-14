@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1428"><title>SMILE CAPTURE · 내부 검증용</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#f4f8ff;background:#0b1428}body{max-width:650px;margin:auto;padding:20px}h1{font-size:1.5rem}p,small{color:#b9c9e3}video{background:black;width:100%;border-radius:16px;max-height:55vh}button,input{font:inherit;padding:12px;border-radius:10px;border:0}button{background:#f8c84d;color:#0b1428;font-weight:700;margin-right:6px;margin-top:10px}button:disabled{opacity:.4}input{display:block;box-sizing:border-box;width:100%;margin:10px 0;background:#172949;color:white;border:1px solid #3d5874}#log{font-size:.85rem;white-space:pre-wrap;overflow-wrap:anywhere;color:#bfd5f8}strong{color:#f8c84d}
+</style></head><body><h1>SMILE CAPTURE</h1><p>촬영과 동시에 서버로 전송합니다. 이 페이지를 열어 둔 상태에서 시험하세요.</p>
+<label for="token">서버에서 발급한 시험용 접근 토큰</label><input id="token" type="password" autocomplete="off" placeholder="관리자 제공 CAPTURE_TOKEN">
+<video id="preview" autoplay muted playsinline></video>
+<div><button id="start">촬영 · 전송 시작</button><button id="stop" disabled>촬영 종료</button><button id="retry">대기 영상 재전송</button></div>
+<p id="status"><strong>대기 중</strong></p><small>촬영 파일은 먼저 이 기기의 IndexedDB에 임시 보존됩니다. 업로드 확인 전에는 탭을 닫거나 브라우저 데이터를 삭제하지 마세요. 화면 잠금·절전·저장 공간 부족 시 녹화가 중단될 수 있습니다.</small><pre id="log"></pre>
+<script src="/capture.js" defer></script></body></html>
