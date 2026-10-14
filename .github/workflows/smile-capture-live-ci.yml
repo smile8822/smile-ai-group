@@ -28,6 +28,10 @@ jobs:
         run: |
           node --check live-archive-worker.mjs
           node --test test/live-archive.test.mjs
+      - name: Install FFmpeg for media smoke test
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
       - name: Real local RTMP recording and decode smoke test
         shell: bash
         run: |
