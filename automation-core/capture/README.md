@@ -81,3 +81,13 @@ CAPTURE_ROOT=/path/to/isolated/staging node qc-worker.mjs
 ```
 
 This invocation processes one queued session, not a long-running background service. Run under an approved job supervisor for live operations. Worker crash/lease recovery and retention policies must be validated before production.
+## V4 — 2026-10-14 private storage mirror
+
+- `storage.mjs`: authenticated server-only S3-compatible PUT+HEAD with SHA256 metadata round-trip. Credentials are environment variables; real remote endpoints must be HTTPS.
+- `mirror-worker.mjs`: periodic mirroring of independently received recording chunks **while capture continues**. A separate per-session `remote-mirror.json` checkpoint makes uploads resumable. Failed past sessions cannot block new ones. Chunk copies remain on the spool; no unverified deletion.
+- `server.mjs`: configurable disk free-space reserve (`CAPTURE_MIN_FREE_BYTES`, default 2 GiB); low capacity replies HTTP 507 instead of silently accepting more media.
+- `ops/`: isolated Docker+Caddy HTTPS test deployment template. It is NOT applied to the MISO staging server; no paid host or bucket has been provisioned.
+- Local automated tests: 10/10 PASS including the mock S3 path, failure isolation, and disk reserve. Actual S3 credentials, public HTTPS, Android field capture and TikTok simultaneous broadcasting are not tested.
+- `ALL_CHUNKS_MIRRORED` is a **transfer milestone**, not FFmpeg/visual QC, GOLD approval, or SNS posting. Remote mirroring still retains the local spool. Object storage retention/cleanup, dedicated media workers, per-user auth and audit/alerts are required before production.
+
+See `ops/DEPLOYMENT_GATES.md` for supervised staging acceptance checks and the TikTok external encoder limitation.
