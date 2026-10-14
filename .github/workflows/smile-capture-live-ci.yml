@@ -1,0 +1,56 @@
+name: SMILE Capture LIVE RTMP and archive CI
+on:
+  push:
+    paths:
+      - 'automation-core/capture/live-archive-worker.mjs'
+      - 'automation-core/capture/ops/live/**'
+      - 'automation-core/capture/test/live-archive.test.mjs'
+      - '.github/workflows/smile-capture-live-ci.yml'
+  pull_request:
+    paths:
+      - 'automation-core/capture/live-archive-worker.mjs'
+      - 'automation-core/capture/ops/live/**'
+      - 'automation-core/capture/test/live-archive.test.mjs'
+      - '.github/workflows/smile-capture-live-ci.yml'
+permissions:
+  contents: read
+jobs:
+  local-live-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify archive code and isolation test
+        working-directory: automation-core/capture
+        run: |
+          node --check live-archive-worker.mjs
+          node --test test/live-archive.test.mjs
+      - name: Real local RTMP recording and decode smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd automation-core/capture
+          mkdir -p .ci-live-recordings
+          chmod 777 .ci-live-recordings
+          docker run -d --rm --name smile-ci-rtmp \
+            -p 127.0.0.1:1935:1935 \
+            -v "$PWD/ops/live/mediamtx.ci.yml:/mediamtx.yml:ro" \
+            -v "$PWD/.ci-live-recordings:/recordings" \
+            bluenviron/mediamtx:1.21.1
+          trap 'docker logs smile-ci-rtmp || true; docker rm -f smile-ci-rtmp || true' EXIT
+          sleep 3
+          ffmpeg -hide_banner -loglevel error -nostdin \
+            -re -f lavfi -i testsrc2=size=160x120:rate=10 \
+            -re -f lavfi -i sine=frequency=440:sample_rate=48000 \
+            -t 7 -c:v libx264 -pix_fmt yuv420p -g 20 \
+            -c:a aac -f flv \
+            'rtmp://127.0.0.1:1935/live?user=publisher&pass=CI_LOCAL_ONLY_DO_NOT_DEPLOY'
+          sleep 3
+          find .ci-live-recordings -type f -name '*.mp4' -print
+          media_file="$(find .ci-live-recordings -type f -name '*.mp4' | head -n 1)"
+          test -n "$media_file"
+          ffprobe -v error -show_entries format=duration:stream=codec_type -of json "$media_file"
+          ffmpeg -hide_banner -loglevel error -nostdin -i "$media_file" -map 0:v:0 -map 0:a:0 -f null -
