@@ -152,3 +152,20 @@ test('daily queue is independent and finalized media becomes a non-publishable Q
     assert.deepEqual(await listQueued(root,QUEUES.DAILY),[]);
   } finally {app.server.closeAllConnections();await new Promise(resolve=>app.server.close(resolve));await rm(root,{recursive:true,force:true});}
 });
+
+
+test('receiver refuses new sessions if the required disk reserve is not available',async()=>{
+  const root=await mkdtemp(join(tmpdir(),'smile-capture-capacity-'));
+  const token='test-only-strong-capture-token-0123456789';
+  const app=createCaptureServer({root,token,minFreeBytes:Number.MAX_SAFE_INTEGER});
+  await app.init();app.server.listen(0,'127.0.0.1');await once(app.server,'listening');
+  try{
+    const base='http://127.0.0.1:'+app.server.address().port;
+    const r=await fetch(base+'/api/sessions',{method:'POST',headers:{authorization:'Bearer '+token,'content-type':'application/json'},body:JSON.stringify({kind:'camera'})});
+    assert.equal(r.status,507);
+  }finally{
+    app.server.closeAllConnections();
+    await new Promise(resolve=>app.server.close(resolve));
+    await rm(root,{recursive:true,force:true});
+  }
+});
