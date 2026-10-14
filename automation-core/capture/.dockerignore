@@ -1,0 +1,15 @@
+**/.env
+**/.env.*
+!**/.env.example
+**/var/
+**/data/
+**/sessions/
+**/media/
+**/*.chunk
+**/*.mp4
+**/*.webm
+**/*.key
+**/*.pem
+**/node_modules/
+**/.git/
+**/bundle.json

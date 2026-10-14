@@ -1,0 +1,33 @@
+# Dedicated staging only, no public plaintext RTMP.
+logLevel: info
+api: false
+metrics: false
+pprof: false
+rtsp: false
+hls: false
+webrtc: false
+srt: false
+playback: false
+moq: false
+rtmp: true
+rtmpEncryption: strict
+rtmpsAddress: :1936
+rtmpServerKey: /certs/server.key
+rtmpServerCert: /certs/server.crt
+authMethod: internal
+authInternalUsers:
+  - user: publisher
+    pass: THIS_IS_NOT_A_PASSWORD_SET_ENV_BEFORE_START
+    ips: []
+    permissions:
+      - action: publish
+        path: live
+paths:
+  live:
+    source: publisher
+    record: true
+    recordPath: /recordings/%path/%Y-%m-%d_%H-%M-%S-%f
+    recordFormat: fmp4
+    recordPartDuration: 1s
+    recordSegmentDuration: 20s
+    recordDeleteAfter: 0s

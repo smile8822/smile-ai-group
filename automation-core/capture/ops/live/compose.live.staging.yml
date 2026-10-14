@@ -1,0 +1,39 @@
+# Dedicated isolated staging only. LIVE sender must support RTMPS.
+services:
+  mediamtx:
+    image: bluenviron/mediamtx:1.21.1
+    restart: unless-stopped
+    environment:
+      MTX_AUTHINTERNALUSERS_0_PASS: ${LIVE_PUBLISH_PASSWORD:?set in host secrets}
+    ports:
+      - "1936:1936"
+    volumes:
+      - ./mediamtx.staging.yml:/mediamtx.yml:ro
+      - ${LIVE_TLS_CERT_DIR:?TLS cert directory required}:/certs:ro
+      - live_recordings:/recordings
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+  live-mirror:
+    build:
+      context: ../..
+      dockerfile: ops/Dockerfile
+    command: ["node", "live-archive-worker.mjs"]
+    restart: unless-stopped
+    env_file: ../.env
+    environment:
+      CAPTURE_ROOT: /data
+      SMILE_CAPTURE_LIVE_RECORDINGS_ROOT: /recordings
+      SMILE_CAPTURE_LIVE_CHANNEL: live
+    volumes:
+      - live_recordings:/recordings:ro
+      - live_receipts:/data
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+volumes:
+  live_recordings:
+  live_receipts:

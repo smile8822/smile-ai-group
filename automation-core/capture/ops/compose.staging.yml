@@ -1,0 +1,47 @@
+# Dedicated HTTPS staging only. No changes to MISO existing host/services.
+services:
+  capture:
+    build:
+      context: ..
+      dockerfile: ops/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      CAPTURE_ROOT: /data
+      CAPTURE_HOST: 0.0.0.0
+      CAPTURE_PORT: 8787
+    expose: ['8787']
+    volumes: [capture_spool:/data]
+    read_only: true
+    tmpfs: ['/tmp:rw,noexec,nosuid,size=64m']
+    security_opt: ['no-new-privileges:true']
+    cap_drop: [ALL]
+  mirror:
+    build:
+      context: ..
+      dockerfile: ops/Dockerfile
+    command: ['node', 'mirror-worker.mjs']
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      CAPTURE_ROOT: /data
+    volumes: [capture_spool:/data]
+    read_only: true
+    tmpfs: ['/tmp:rw,noexec,nosuid,size=64m']
+    security_opt: ['no-new-privileges:true']
+    cap_drop: [ALL]
+  tls:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      CAPTURE_DOMAIN: ${CAPTURE_DOMAIN:?Set dedicated staging domain}
+    ports: ['80:80', '443:443']
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [capture]
+volumes:
+  capture_spool:
+  caddy_data:
+  caddy_config:
