@@ -58,7 +58,7 @@ The browser has constraints: Android lock-screen, OS background suspension, unex
 
 **Daily work isolation:** New `jobs.mjs` creates independent `SAME_DAY_CAPTURE` and `ARCHIVE_REPAIR` queues. Each completed daily source is registered for downstream QC; queue records have `qcStatus: NOT_VERIFIED` and `publishAllowed: false`. Startup reconciliation repairs a crash between source finalization and queue registration; claimed jobs are not duplicated. **This is queue plumbing, not an operating KAIO video editor or a publishing service.** Worker deployment, job leases/stale job reaping, FFmpeg media QC and KAIO integration remain necessary.
 
-**Verification:** Five Node automated tests are passing, including 120 sequential media fragments while an older recording remains stalled and required end-count integrity. The local Chromium camera E2E attempt was blocked by the execution environment's administrator policy (`ERR_BLOCKED_BY_ADMINISTRATOR` when visiting localhost). **No real Android, HTTPS remote endpoint, prolonged full-quality recording, network dropout field test, or TikTok simultaneous stream test has passed yet.**
+**Verification:** Six Node automated tests are passing, including 120 sequential media fragments while an older recording remains stalled and required end-count integrity. The local Chromium camera E2E attempt was blocked by the execution environment's administrator policy (`ERR_BLOCKED_BY_ADMINISTRATOR` when visiting localhost). **No real Android, HTTPS remote endpoint, prolonged full-quality recording, network dropout field test, or TikTok simultaneous stream test has passed yet.**
 
 **Deployment gate:** Do not point this disk-backed proof-of-concept at the existing 80-GB MISO staging server for sustained footage. A dedicated HTTPS staging host, private object storage, rate limits, real health/space monitoring and a media processing worker must be provisioned and validated before internal daily use. The code/PR do not change the existing 10/11 Drive original, cache, previously approved media or booked SNS posts.
 
@@ -71,3 +71,13 @@ node --check assemble.mjs
 node --check public/capture.js
 npm test
 ```
+
+## Optional technical media QC worker
+
+`qc-worker.mjs` consumes only the `SAME_DAY_CAPTURE` queue, assembles uploaded segments, requires video and audio streams, executes `ffprobe` and full `ffmpeg` decode, then writes a technical QC receipt. Its output always has `publishAllowed: false`. An editorial review and KAIO scheduling/publishing worker are **still unimplemented**. Install FFmpeg and run on a separate media-processing worker after establishing private storage:
+
+```bash
+CAPTURE_ROOT=/path/to/isolated/staging node qc-worker.mjs
+```
+
+This invocation processes one queued session, not a long-running background service. Run under an approved job supervisor for live operations. Worker crash/lease recovery and retention policies must be validated before production.
