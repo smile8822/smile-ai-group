@@ -22,6 +22,7 @@ jobs:
         working-directory: automation-core/capture
         run: |
           node --check server.mjs
+          node --check jobs.mjs
           node --check assemble.mjs
           node --check public/capture.js
       - name: Automated tests
