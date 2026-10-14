@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import { Transform } from 'node:stream';
 import { fileURLToPath } from 'node:url';
+import { ensureQueues, enqueueFinishedCapture, reconcileDailyCapture } from './jobs.mjs';
 
 const HERE = fileURLToPath(new URL('.', import.meta.url));
 const JSON_LIMIT = 4096;
@@ -84,10 +85,20 @@ export function createCaptureServer({ root, token, maxChunkBytes = 100 * 1024 * 
       const id = match[1];
       if (req.method === 'GET' && !match[2] && !match[4]) return reply(res, 200, await load(id));
       if (req.method === 'POST' && match[4] === 'finish') return await withLock(id, async () => {
+        const { expectedChunks } = await readJson(req);
+        if (!Number.isSafeInteger(expectedChunks) || expectedChunks < 1 || expectedChunks > 10_000_000) fail(400, 'expectedChunks must be a positive integer');
         const manifest = await load(id);
-        if (!manifest.parts.length || manifest.parts.some((part, i) => part.index !== i)) fail(409, 'Missing chunks: cannot finalize');
+        if (manifest.status === 'UPLOAD_FINISHED') {
+          if (manifest.expectedChunks !== expectedChunks) fail(409, 'Conflicting finalization');
+          await enqueueFinishedCapture(root, id);
+          return reply(res, 200, manifest);
+        }
+        if (manifest.parts.length !== expectedChunks || manifest.parts.some((part, i) => part.index !== i)) fail(409, 'Missing chunks: cannot finalize');
+        manifest.expectedChunks = expectedChunks;
         manifest.status = 'UPLOAD_FINISHED'; manifest.updatedAt = new Date().toISOString();
-        await save(id, manifest); reply(res, 200, manifest);
+        await save(id, manifest);
+        await enqueueFinishedCapture(root, id);
+        reply(res, 200, manifest);
       });
       if (req.method === 'PUT' && match[2] === 'chunks') {
         if (!CHUNK_INDEX.test(match[3])) fail(400, 'Bad chunk index');
@@ -134,7 +145,11 @@ export function createCaptureServer({ root, token, maxChunkBytes = 100 * 1024 * 
       if (!error.status) console.error('capture-server:', error);
     }
   };
-  return { server: createServer(handler), init: () => mkdir(sessionsDir, { recursive: true, mode: 0o700 }) };
+  return { server: createServer(handler), init: async () => {
+    await mkdir(sessionsDir, {recursive:true,mode:0o700});
+    await ensureQueues(root);
+    await reconcileDailyCapture(root);
+  } };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
