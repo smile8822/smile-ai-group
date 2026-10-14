@@ -1,0 +1,29 @@
+name: SMILE Capture Pilot CI
+on:
+  push:
+    paths:
+      - 'automation-core/capture/**'
+      - '.github/workflows/smile-capture-pilot-ci.yml'
+  pull_request:
+    paths:
+      - 'automation-core/capture/**'
+      - '.github/workflows/smile-capture-pilot-ci.yml'
+permissions:
+  contents: read
+jobs:
+  capture-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static syntax check
+        working-directory: automation-core/capture
+        run: |
+          node --check server.mjs
+          node --check assemble.mjs
+          node --check public/capture.js
+      - name: Automated tests
+        working-directory: automation-core/capture
+        run: npm test
