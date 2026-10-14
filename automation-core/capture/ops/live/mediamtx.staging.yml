@@ -8,6 +8,7 @@ hls: false
 webrtc: false
 srt: false
 playback: false
+moq: false
 rtmp: true
 rtmpEncryption: strict
 rtmpsAddress: :1936
