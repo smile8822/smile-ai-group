@@ -25,7 +25,7 @@ const basic = (targetId, metadataTitle, bodyText) => ({
   coreRelated: false,
   hashtags: {
     topic: ["#부산여행"], region: ["#부산", "#대한민국"],
-    trend: [trendEvidence], brand: ["#SMILEAIGROUP"],
+    trend: [trendEvidence], brand: [],
   },
 });
 const tiktokInfo = {
@@ -36,10 +36,10 @@ const tiktokInfo = {
 const draftInputs = [
   { ...basic("tt-ko", "이런 순간 처음 보셨나요?", "부산의 현장에서 직접 발견한 장면입니다. 여러분 생각은 어떠세요?"), ...tiktokInfo },
   { ...basic("tt-id", "Cerita hari ini di Busan", "Kami menemukan adegan ini di Busan. Bagaimana pendapatmu?"), ...tiktokInfo, hashtags: {
-    topic: ["#WisataBusan"], region: ["#Busan", "#KoreaSelatan"], trend: [], brand: ["#SMILEAIGROUP"],
+    topic: ["#WisataBusan"], region: ["#Busan", "#KoreaSelatan"], trend: [], brand: [],
   } },
   { ...basic("ig-ko", "부산에서 발견한 뜻밖의 장면", "이런 모습을 보신 적 있나요? 잊기 어려운 현장을 소개합니다."), hashtags: {
-    topic: ["#부산브이로그"], region: ["#부산"], trend: [], brand: ["#SMILEAIGROUP"],
+    topic: ["#부산브이로그"], region: ["#부산"], trend: [], brand: [],
   } },
   { ...basic("yt-ko", "부산 현장 이야기 | 직접 본 장면", "현장에서 본 장면의 맥락을 직접 살펴봅니다. 여러분의 의견을 댓글로 알려 주세요."), privacyChoice: "private", youtubeKeywordTags: ["부산", "여행 쇼츠"] },
   { ...basic("fb-ko", "여러분도 이런 경험이 있으신가요?", "부산에 사는 사람들의 일상을 담았습니다. 생각을 함께 나눠 주세요."), location: {
@@ -56,7 +56,7 @@ assert.equal(result.status, "DRAFT_ONLY_WAITING_FOR_MEDIA_ACCOUNT_AND_PLATFORM_Q
 assert.equal(result.productionPermission, false);
 assert.equal(result.publicationPermission, false);
 assert.equal(result.drafts.length, 5);
-assert.deepEqual(result.drafts[0].orderedHashtags, ["#부산여행", "#부산", "#대한민국", "#오늘의발견", "#SMILEAIGROUP"]);
+assert.deepEqual(result.drafts[0].orderedHashtags, ["#부산여행", "#부산", "#대한민국", "#오늘의발견"]);
 assert.equal(result.drafts[0].metadata.privacyLevel, "PUBLIC_TO_EVERYONE");
 assert.equal(result.drafts[1].channelKey, result.drafts[0].channelKey);
 assert.equal(result.drafts[3].metadata.privacyStatus, "private");
@@ -80,6 +80,22 @@ rejects({ draftInputs: changed(0, { privacyChoice: "PRIVATE_SOMETHING" }) }, /cu
 rejects({ draftInputs: changed(0, { hashtags: { topic: ["#CORE"], region: [], trend: [], brand: [] } }) }, /#CORE is forbidden/);
 rejects({ draftInputs: changed(0, { hashtags: { topic: ["#SMILEAIGROUP"], region: [], trend: [], brand: [] } }) }, /Group brand hashtags must only appear at the end/);
 rejects({ draftInputs: changed(0, { hashtags: { topic: [], region: [], trend: [], brand: ["#SMILEAIGROUP", "#MISO", "#CORE"] } }) }, /limited to two/);
+rejects({ draftInputs: changed(0, { hashtags: { topic: [], region: [], trend: [], brand: ["#SMILEAIGROUP"] } }) }, /content-relevant company brand evidence/);
+const reviewedCompanyContext = {
+  relatedToCompany: true, scriptReviewVerified: true,
+  reviewerId: "fixture-human-reviewer", evidenceRef: "fixture-script-showing-miso-service",
+  featuredBrandTags: ["#MISO"],
+};
+rejects({ draftInputs: changed(0, { brandRelevance: reviewedCompanyContext,
+  hashtags: { topic: [], region: [], trend: [], brand: ["#SMILEAIGROUP"] } }) }, /does not match the company brand actually featured/);
+const companyDrafts = changed(0, {
+  metadataTitle: "MISO AI 서비스 실제 사용 안내",
+  bodyText: "미소 AI 서비스를 활용하는 방법을 소개합니다.",
+  brandRelevance: reviewedCompanyContext,
+  hashtags: { topic: ["#AI서비스"], region: [], trend: [], brand: ["#MISO"] },
+});
+const companyResult = createPlatformPublishingDraftPackage({ ...args, draftInputs: companyDrafts });
+assert.deepEqual(companyResult.drafts[0].orderedHashtags, ["#AI서비스", "#MISO"]);
 rejects({ draftInputs: changed(0, { hashtags: { topic: [], region: [], trend: [{ ...trendEvidence, verified: false }], brand: [] } }) }, /verified, HTTPS source/);
 rejects({ draftInputs: changed(0, { hashtags: { topic: [], region: [], trend: [{ ...trendEvidence, observedAt: "2026-11-01T07:30:00Z" }], brand: [] } }) }, /stale or from the future/);
 rejects({ draftInputs: changed(4, { location: { name: "부산", recordedOnScene: true, verified: false, evidenceUrl: "https://www.example.org/scene" } }) }, /Location tags require verified/);
