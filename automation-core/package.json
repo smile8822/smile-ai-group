@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "verify": "node scripts/verify-core.mjs && node scripts/verify-phase2.mjs && node scripts/verify-phase3.mjs && node scripts/verify-external-success.mjs && node scripts/verify-creative-director-external.mjs && node scripts/verify-youtube-discovery.mjs && node scripts/verify-external-creative-brief.mjs && node scripts/verify-brand-visual-treatment.mjs && node scripts/verify-research-driven-orchestrator.mjs",
+    "verify": "node scripts/verify-core.mjs && node scripts/verify-phase2.mjs && node scripts/verify-phase3.mjs && node scripts/verify-external-success.mjs && node scripts/verify-creative-director-external.mjs && node scripts/verify-youtube-discovery.mjs && node scripts/verify-external-creative-brief.mjs && node scripts/verify-brand-visual-treatment.mjs && node scripts/verify-research-driven-orchestrator.mjs && node scripts/verify-platform-publishing-draft.mjs",
     "ingest:gdrive": "node scripts/import-google-drive-large-media.mjs"
   }
 }
