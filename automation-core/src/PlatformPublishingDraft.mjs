@@ -45,6 +45,20 @@ function hashtagsFor(input, checkedAtMs) {
   if (registered.some((value) => !BRAND_TAGS.has(value.toUpperCase()))) {
     throw new Error("Unapproved company brand hashtag");
   }
+  // Fail closed: unrelated local scenes, public news, travel or Bukangi stories get NO company tag.
+  // A logo watermark or publisher identity alone does not establish the topic's relationship.
+  if (registered.length > 0) {
+    const context = input.brandRelevance;
+    if (context?.relatedToCompany !== true || context?.scriptReviewVerified !== true ||
+        !Array.isArray(context?.featuredBrandTags) ||
+        !context?.reviewerId?.trim() || !context?.evidenceRef?.trim()) {
+      throw new Error("Company hashtags require reviewed, content-relevant company brand evidence");
+    }
+    const featured = new Set(context.featuredBrandTags.map((value) => tag(value, "featured company brand").toUpperCase()));
+    if (registered.some((value) => !featured.has(value.toUpperCase()))) {
+      throw new Error("Company hashtag does not match the company brand actually featured in the video");
+    }
+  }
   const ordered = [...topics.map((value) => tag(value, "topic hashtag")), ...regions.map((value) => tag(value, "region hashtag"))];
   for (const item of trends) {
     const trending = tag(item?.tag, "trend hashtag");
