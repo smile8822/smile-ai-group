@@ -59,10 +59,13 @@ const out = run();
 assert.equal(out.externalSuccess.status, "RESEARCH_ONLY_NOT_GOLDEN");
 assert.equal(out.externalSuccess.cases[0].distribution, "MIXED");
 assert.equal(out.platformStories[0].externalBenchmark.evidenceRole, "INSPIRATION_NOT_PRODUCTION_APPROVAL");
+assert.equal(out.platformStories[0].externalCreativeBrief.status, "CREATIVE_RESEARCH_BRIEF_ONLY");
+assert.equal(out.platformStories[0].externalCreativeBrief.insights[0].basis, "SOURCE_REPORTED");
 assert.equal(out.locked, true);
 assert.throws(() => run(request, analysis, null), /External success evidence is required/);
 assert.throws(() => run(request, { ...analysis, externalCaseRefs: ["UNKNOWN"] }), /unverified or cross-platform/);
 assert.throws(() => run(request, { ...analysis, originalityStrategy: undefined }), /originalityStrategy/);
+assert.throws(() => run({ ...request, requireDirectVideoReview: true }), /Missing directly reviewed external video/);
 
 const legacy = run({ ...request, requireExternalSuccessResearch: false }, { ...analysis, externalCaseRefs: [] }, null);
 assert.equal(legacy.externalSuccess, null);
