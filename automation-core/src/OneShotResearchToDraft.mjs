@@ -1,0 +1,243 @@
+import { validateExternalSuccessBundle } from "./ExternalSuccessEvidence.mjs";
+import { buildExternalCreativeBrief } from "./ExternalCreativeBrief.mjs";
+import { createResearchDrivenCreativePlan } from "./ResearchDrivenCreativeOrchestrator.mjs";
+import { createPlatformPublishingDraftPackage } from "./PlatformPublishingDraft.mjs";
+
+const IDEA_SCORE_KEYS = Object.freeze([
+  "freshnessScore", "firstImpactScore", "audienceFitScore", "platformFitScore",
+  "feasibilityScore", "truthSafetyScore", "repetitionRiskScore",
+]);
+const TITLE_SCORE_KEYS = Object.freeze([
+  "noveltyScore", "firstImpactScore", "clarityScore", "relevanceScore", "platformFitScore",
+  "truthSafetyScore", "curiosityScore", "repetitionRiskScore", "clickbaitRiskScore",
+]);
+const VISUAL_SCORE_KEYS = Object.freeze([
+  "noveltyScore", "platformFitScore", "firstImpactScore", "legibilityScore", "repetitionRiskScore",
+]);
+
+function nonempty(value, label) {
+  if (typeof value !== "string" || !value.trim()) throw new Error(`${label} is required`);
+  return value.trim();
+}
+
+function requireProvider(provider, method) {
+  if (typeof provider?.[method] !== "function") throw new Error(`Provider must implement ${method}()`);
+}
+
+function verifyCandidateReferences(platform, group, label, caseIds) {
+  if (!Array.isArray(group) || group.length === 0) throw new Error(`${platform}.${label} candidates are required`);
+  const used = new Set();
+  for (const item of group) {
+    const id = nonempty(item.id, `${label}.id`);
+    if (used.has(id)) throw new Error(`${label} duplicate candidate: ${id}`);
+    used.add(id);
+    if (item.platform !== platform) throw new Error(`${label} has wrong platform: ${item.platform}`);
+    if (!Array.isArray(item.evidenceRefs) || item.evidenceRefs.length === 0 ||
+        item.evidenceRefs.some((ref) => !caseIds.has(ref))) {
+      throw new Error(`${label} must cite only actually validated ${platform} source cases`);
+    }
+  }
+}
+
+function applyIndependentScore(candidate, reviews, keys, label) {
+  const id = nonempty(candidate.id, `${label}.id`);
+  const scores = reviews?.[id];
+  if (!scores || typeof scores !== "object") throw new Error(`Missing independent review scores for ${label} ${id}`);
+  const trusted = {};
+  for (const key of keys) {
+    const value = scores[key];
+    if (typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 1) {
+      throw new Error(`${label} ${id} independent reviewer score ${key} must be 0..1`);
+    }
+    trusted[key] = value;
+  }
+  // Discard all generator-provided score fields before invoking the existing selectors.
+  return Object.freeze({ ...candidate, ...trusted });
+}
+
+function reviewedPlatformInput({ platform, generated, review, caseIds, checkedAt, goldenBindings,
+  assets = [], hookEvidence = [], productionSettings = {}, recentTreatmentIds = [] }) {
+  if (generated?.platform !== platform || !generated.analysis) throw new Error(`Generator output platform mismatch: ${platform}`);
+  if (review?.status !== "REVIEWED" || !review?.reviewerId ||
+      !generated?.generatorId || generated.generatorId === review.reviewerId ||
+      review.generationSourceId !== generated.generatorId) {
+    throw new Error(`${platform} requires an identified independent creative reviewer`);
+  }
+  const ids = [...caseIds];
+  verifyCandidateReferences(platform, generated.ideaCandidates, "idea", caseIds);
+  if (generated.titleRequired === true) {
+    verifyCandidateReferences(platform, generated.titleCandidates, "title", caseIds);
+    if (!Array.isArray(generated.visualCandidates) || generated.visualCandidates.length < 2) {
+      throw new Error(`${platform} needs two or more title treatments`);
+    }
+  } else if (generated.titleRequired !== false || generated.titleCandidates?.length || generated.visualCandidates?.length) {
+    throw new Error(`${platform} must choose an explicit title/no-title strategy`);
+  }
+  const analysis = Object.freeze({
+    platform,
+    analyzedAt: checkedAt,
+    audienceFit: nonempty(generated.analysis.audienceFit, `${platform}.audienceFit`),
+    storyStrategy: nonempty(generated.analysis.storyStrategy, `${platform}.storyStrategy`),
+    originalityStrategy: nonempty(generated.analysis.originalityStrategy, `${platform}.originalityStrategy`),
+    externalCaseRefs: ids,
+  });
+  return Object.freeze({
+    platform, analysis,
+    titleRequired: generated.titleRequired,
+    ideaCandidates: generated.ideaCandidates.map((item) => applyIndependentScore(item, review.ideaScores, IDEA_SCORE_KEYS, "idea")),
+    titleCandidates: generated.titleRequired
+      ? generated.titleCandidates.map((item) => applyIndependentScore(item, review.titleScores, TITLE_SCORE_KEYS, "title"))
+      : [],
+    visualCandidates: generated.titleRequired
+      ? generated.visualCandidates.map((item) => applyIndependentScore(item, review.visualScores, VISUAL_SCORE_KEYS, "visual"))
+      : [],
+    scriptsByIdeaId: generated.scriptsByIdeaId,
+    goldenBindings, // Trust boundary: ONLY server-supplied, never generated by AI.
+    recentTreatmentIds,
+    availableAssets: assets,
+    hookEvidence,
+    subtitle: productionSettings.subtitle || { required: false },
+    voice: productionSettings.voice || { required: false },
+    music: productionSettings.music || { required: false },
+    thumbnail: productionSettings.thumbnail || {},
+    callToAction: productionSettings.callToAction || {},
+  });
+}
+
+function trustedTrendTags(modelTrendTags, allowlist = []) {
+  if (!Array.isArray(modelTrendTags)) throw new Error("Proposed trend tags must be an array");
+  const verified = new Map(allowlist.filter((item) => item.verified === true).map((item) => [item.tag, item]));
+  return modelTrendTags.map((item) => {
+    const rawTag = typeof item === "string" ? item : item?.tag;
+    if (!verified.has(rawTag)) throw new Error(`AI proposed unsupported or unverified trend hashtag: ${rawTag}`);
+    return verified.get(rawTag); // Provenance comes solely from the trusted research source.
+  });
+}
+
+/**
+ * One-shot *planning* orchestration. Providers are injected capabilities with independently
+ * authorized/verified identities; this module never requests credentials, calls external SNS,
+ * renders media, or publishes content.
+ */
+export async function createOneShotResearchToDraft({
+  request,
+  targets,
+  checkedAt,
+  externalSuccessBundle,
+  researchProvider = null,
+  researchBundle = null,
+  brandVisualPolicy,
+  goldenBindingsByPlatform,
+  approvedAssetsByPlatform = {},
+  hookEvidenceByPlatform = {},
+  productionSettingsByPlatform = {},
+  recentTreatmentIdsByPlatform = {},
+  accountSettingsByTarget = {},
+  trustedBrandRelevanceByTarget = {},
+  verifiedTrendAllowlistByTarget = {},
+  verifiedLocationsByTarget = {},
+  platformLocationCapabilities = {},
+  generator,
+  evaluator,
+  localization,
+}) {
+  requireProvider(generator, "propose");
+  requireProvider(evaluator, "review");
+  requireProvider(localization, "compose");
+  const platforms = [...new Set(request?.targetPlatforms || [])];
+  if (!platforms.length) throw new Error("One-shot request needs explicit target SNS platforms");
+  if (!Array.isArray(targets) || !targets.length) throw new Error("Explicit locale/account targets are required");
+  // The provider must be configured on the trusted server side, never supplied by a customer/LLM.
+  // There is deliberately no unauthenticated scraping or inferred frame review fallback.
+  const researched = externalSuccessBundle || (researchProvider?.collectReviewedEvidence
+    ? await researchProvider.collectReviewedEvidence(Object.freeze({
+      requestId: request.requestId, requestedPlatforms: Object.freeze([...platforms]),
+      instructions: "Return only auditor-verified external video evidence with real timestamped frame observations",
+    }))
+    : null);
+  const evidence = validateExternalSuccessBundle({
+    targetPlatforms: platforms, bundle: researched,
+    required: true, requireDirectVideoReview: true,
+  });
+  const inputs = [];
+  for (const platform of platforms) {
+    const caseIds = new Set(evidence.cases.filter((item) => item.platform === platform &&
+      item.visualReviewStatus === "FRAMES_REVIEWED").map((item) => item.id));
+    if (!caseIds.size) throw new Error(`No actual direct-video review for ${platform}`);
+    const brief = buildExternalCreativeBrief({ platform, bundle: evidence,
+      desiredCountry: request.country || null, desiredContentClass: request.contentClass || null });
+    const generated = await generator.propose(Object.freeze({
+      request: Object.freeze({ requestId: request.requestId, objective: request.objective,
+        platform, country: request.country || null }),
+      platform, externalCreativeBrief: brief,
+      caseIds: Object.freeze([...caseIds]),
+      instructions: "Create original scripts and distinct candidate ideas; use no copied media, no fabricated sources or promised view counts",
+    }));
+    const review = await evaluator.review(Object.freeze({
+      platform, generated, evidenceCaseIds: Object.freeze([...caseIds]),
+      instructions: "Score independently for novelty, truth, first impact, fit, repetition, legibility; do not manufacture success metrics",
+    }));
+    inputs.push(reviewedPlatformInput({
+      platform, generated, review, caseIds, checkedAt,
+      goldenBindings: goldenBindingsByPlatform?.[platform],
+      assets: approvedAssetsByPlatform[platform],
+      hookEvidence: hookEvidenceByPlatform[platform],
+      productionSettings: productionSettingsByPlatform[platform],
+      recentTreatmentIds: recentTreatmentIdsByPlatform[platform],
+    }));
+  }
+  const creativePlan = createResearchDrivenCreativePlan({
+    request, externalSuccessBundle: researched, researchBundle,
+    platformInputs: inputs, brandVisualPolicy,
+  });
+  const drafts = [];
+  const stories = new Map(creativePlan.creativeExecutionSpec.platformStories.map((story) => [story.platform, story]));
+  for (const target of targets) {
+    const story = stories.get(target.platform);
+    if (!story) throw new Error(`Unrequested output target: ${target.platform}`);
+    const proposed = await localization.compose(Object.freeze({
+      target: Object.freeze({ ...target }),
+      selectedStory: story,
+      brandRule: "No company tag unless this video actually features the company service; use subject and location tags first",
+      sourceCopyMustStayTruthful: true,
+    }));
+    if (!proposed || proposed.targetId !== target.id) throw new Error(`Localization output target mismatch: ${target.id}`);
+    if (proposed.location != null || proposed.brandRelevance != null || proposed.creatorPrivacyOptions != null ||
+        proposed.creatorInfoVerified != null || proposed.privacyChoice != null) {
+      throw new Error("Creative model cannot self-certify location, brand relevance, or account privacy");
+    }
+    const hashtags = proposed.hashtags || {};
+    const account = accountSettingsByTarget[target.id] || {};
+    drafts.push({
+      ...proposed,
+      hashtags: {
+        topic: hashtags.topic || [], region: hashtags.region || [],
+        trend: trustedTrendTags(hashtags.trend || [], verifiedTrendAllowlistByTarget[target.id] || []),
+        brand: hashtags.brand || [],
+      },
+      brandRelevance: trustedBrandRelevanceByTarget[target.id] || null,
+      location: verifiedLocationsByTarget[target.id] || null,
+      privacyChoice: account.privacyChoice,
+      creatorPrivacyOptions: account.creatorPrivacyOptions,
+      creatorInfoVerified: account.creatorInfoVerified,
+      // Never trust model/accountSettings to alter the explicit target identity.
+      targetId: target.id,
+    });
+  }
+  const publicationDrafts = createPlatformPublishingDraftPackage({
+    creativePlan, targets, draftInputs: drafts, checkedAt, platformLocationCapabilities,
+  });
+  return Object.freeze({
+    status: "ONE_SHOT_AI_CREATIVE_AND_METADATA_DRAFTS_READY_NOT_PUBLISHED",
+    owner: "SMILE_AI_GROUP",
+    requestId: request.requestId,
+    creativePlan,
+    publicationDrafts,
+    externallyResearchedBeforeGeneration: true,
+    independentEvaluationRequired: true,
+    originalMediaNotYetRendered: true,
+    productionPermission: false,
+    publicationPermission: false,
+    nextGate: "AUTHORIZED_LIVE_RESEARCH_GOLDEN_MEDIA_RENDER_LOCALE_QC_ACCOUNT_AND_OWNER_APPROVAL",
+  });
+}
