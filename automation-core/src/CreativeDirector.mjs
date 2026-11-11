@@ -1,3 +1,8 @@
+import {
+  validateExternalSuccessBundle,
+  validateCreativeBenchmarkDecision,
+} from "./ExternalSuccessEvidence.mjs";
+
 const SUPPORTED_PLATFORMS = new Set([
   "tiktok",
   "instagram",
@@ -192,6 +197,7 @@ export function createCreativeExecutionSpec({
   researchBundle,
   platformAnalyses,
   storyPlans,
+  externalSuccessBundle,
 }) {
   if (!request || typeof request !== "object") {
     throw new Error("Creative request is required.");
@@ -212,6 +218,11 @@ export function createCreativeExecutionSpec({
   }
 
   const verifiedResearch = validateResearchBundle(request, researchBundle);
+  const verifiedExternalSuccess = validateExternalSuccessBundle({
+    targetPlatforms,
+    bundle: externalSuccessBundle,
+    required: request.requireExternalSuccessResearch === true,
+  });
 
   assertRequestedPlatformsOnly(targetPlatforms, platformAnalyses || [], "platform analysis");
   assertRequestedPlatformsOnly(targetPlatforms, storyPlans || [], "story plan");
@@ -242,6 +253,12 @@ export function createCreativeExecutionSpec({
       creativeDecisions,
       plan.goldenBindings,
     );
+    const externalBenchmark = validateCreativeBenchmarkDecision({
+      platform,
+      analysis,
+      bundle: verifiedExternalSuccess,
+      required: request.requireExternalSuccessResearch === true,
+    });
 
     return Object.freeze({
       platform,
@@ -256,6 +273,7 @@ export function createCreativeExecutionSpec({
       evidenceRefs: Object.freeze([...(plan.evidenceRefs || [])]),
       creativeDecisions,
       goldenBindings,
+      externalBenchmark,
     });
   });
 
@@ -273,6 +291,7 @@ export function createCreativeExecutionSpec({
     latestInformation: request.latestInformation === true,
     trendSensitive: request.trendSensitive === true,
     research: verifiedResearch,
+    externalSuccess: verifiedExternalSuccess,
     targetPlatforms: Object.freeze(targetPlatforms),
     platformScopePolicy: Object.freeze({
       requestedPlatformsOnly: true,
