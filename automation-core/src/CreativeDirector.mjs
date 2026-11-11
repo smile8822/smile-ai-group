@@ -2,6 +2,7 @@ import {
   validateExternalSuccessBundle,
   validateCreativeBenchmarkDecision,
 } from "./ExternalSuccessEvidence.mjs";
+import { buildExternalCreativeBrief } from "./ExternalCreativeBrief.mjs";
 
 const SUPPORTED_PLATFORMS = new Set([
   "tiktok",
@@ -222,6 +223,7 @@ export function createCreativeExecutionSpec({
     targetPlatforms,
     bundle: externalSuccessBundle,
     required: request.requireExternalSuccessResearch === true,
+    requireDirectVideoReview: request.requireDirectVideoReview === true,
   });
 
   assertRequestedPlatformsOnly(targetPlatforms, platformAnalyses || [], "platform analysis");
@@ -259,6 +261,12 @@ export function createCreativeExecutionSpec({
       bundle: verifiedExternalSuccess,
       required: request.requireExternalSuccessResearch === true,
     });
+    const externalCreativeBrief = buildExternalCreativeBrief({
+      platform,
+      bundle: verifiedExternalSuccess,
+      desiredCountry: request.country || null,
+      desiredContentClass: request.contentClass || null,
+    });
 
     return Object.freeze({
       platform,
@@ -274,6 +282,7 @@ export function createCreativeExecutionSpec({
       creativeDecisions,
       goldenBindings,
       externalBenchmark,
+      externalCreativeBrief,
     });
   });
 

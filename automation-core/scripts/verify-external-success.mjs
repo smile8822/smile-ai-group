@@ -29,4 +29,27 @@ assert.throws(() => validateExternalSuccessBundle({ ...request, bundle: { ...inp
 assert.throws(() => validateCreativeBenchmarkDecision({ platform: "youtube", analysis: { externalCaseRefs: ["BVG_CASE"], originalityStrategy: "Original" }, bundle, required: true }), /cross-platform/);
 assert.throws(() => validateCreativeBenchmarkDecision({ platform: "tiktok", analysis: { externalCaseRefs: ["BVG_CASE"] }, bundle, required: true }), /originalityStrategy/);
 assert.equal(validateExternalSuccessBundle({ ...request, bundle: undefined, required: false }), null);
+
+const auditedCase = {
+  ...input.cases[0],
+  visualReviewStatus: "FRAMES_REVIEWED",
+  frameAudit: [{
+    dimension: "HOOK",
+    sourceVideoUrl: "https://www.tiktok.com/@creator/video/1234567890000000000",
+    visualObservation: "An original gesture appears within the opening 1.5 seconds",
+    timeSec: 1.5,
+    reviewerId: "human-editor-001",
+    reviewMethod: "MANUAL_VIDEO_REVIEW",
+    reviewedAt: "2026-11-11T08:59:00Z",
+  }],
+  techniques: [{ dimension: "HOOK", description: "Opening gesture", basis: "FRAME_OBSERVED" }],
+};
+const audited = validateExternalSuccessBundle({ ...request, bundle: { ...input, cases: [auditedCase] }, required: true });
+assert.equal(audited.cases[0].frameAudit[0].rightsToReuseMedia, false);
+assert.equal(validateExternalSuccessBundle({ ...request, bundle: { ...input, cases: [auditedCase] }, required: true, requireDirectVideoReview: true }).cases.length, 1);
+assert.throws(() => validateExternalSuccessBundle({ ...request, bundle: input, required: true, requireDirectVideoReview: true }), /Missing directly reviewed external video/);
+assert.throws(() => validateExternalSuccessBundle({ ...request, bundle: input, required: false, requireDirectVideoReview: true }), /requires the external success research gate/);
+assert.throws(() => validateExternalSuccessBundle({ ...request, bundle: { ...input, cases: [{ ...auditedCase, frameAudit: [] }] }, required: true }), /without timestamped frameAudit/);
+assert.throws(() => validateExternalSuccessBundle({ ...request, bundle: { ...input, cases: [{ ...auditedCase, techniques: [{ dimension: "FONT", description: "Unreviewed font", basis: "FRAME_OBSERVED" }] }] }, required: true }), /lacks a matching reviewed frame timestamp/);
+assert.throws(() => validateExternalSuccessBundle({ ...request, bundle: { ...input, cases: [{ ...auditedCase, frameAudit: [{ ...auditedCase.frameAudit[0], reviewedAt: "2026-11-12T08:59:00Z" }] }] }, required: true }), /reviewed after the bundle/);
 console.log("PASS: external success evidence validation, platform scope, provenance, organic/paid, creative originality, backward compatibility");

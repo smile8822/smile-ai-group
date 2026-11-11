@@ -3,6 +3,7 @@ const DISTRIBUTION = new Set(["ORGANIC", "PAID", "MIXED"]);
 const OBSERVATION = new Set(["FRAMES_REVIEWED", "CASE_DESCRIPTION_ONLY"]);
 const EVIDENCE_BASIS = new Set(["FRAME_OBSERVED", "SOURCE_REPORTED", "HYPOTHESIS"]);
 const MEASUREMENT_SCOPE = new Set(["SINGLE_VIDEO", "CAMPAIGN", "CREATOR_COHORT", "FORMAT_CATEGORY"]);
+const REVIEW_METHOD = new Set(["MANUAL_VIDEO_REVIEW", "AUTHORIZED_VISUAL_MODEL_REVIEW"]);
 
 function requiredString(value, label) {
   if (typeof value !== "string" || !value.trim()) throw new Error(`${label} is required`);
@@ -45,11 +46,32 @@ function normalizeMetric(metric, caseId, index) {
   });
 }
 
-function normalizeTechnique(technique, caseId, index, visualReviewStatus) {
+function normalizeFrameAudit(audit, caseId, index, reviewedAt) {
+  const label = `${caseId}.frameAudit[${index}]`;
+  const timeSec = Number(audit.timeSec);
+  if (!Number.isFinite(timeSec) || timeSec < 0) throw new Error(`${label}.timeSec must be nonnegative`);
+  const at = isoDate(audit.reviewedAt, `${label}.reviewedAt`);
+  if (Date.parse(at) > Date.parse(reviewedAt)) throw new Error(`${label} was reviewed after the bundle`);
+  return Object.freeze({
+    dimension: requiredString(audit.dimension, `${label}.dimension`),
+    visualObservation: requiredString(audit.visualObservation, `${label}.visualObservation`),
+    sourceVideoUrl: httpsUrl(audit.sourceVideoUrl, `${label}.sourceVideoUrl`),
+    reviewerId: requiredString(audit.reviewerId, `${label}.reviewerId`),
+    reviewMethod: inSet(audit.reviewMethod, REVIEW_METHOD, `${label}.reviewMethod`),
+    reviewedAt: at,
+    timeSec,
+    rightsToReuseMedia: false,
+  });
+}
+
+function normalizeTechnique(technique, caseId, index, visualReviewStatus, frameAudit) {
   const label = `${caseId}.techniques[${index}]`;
   const basis = inSet(technique.basis, EVIDENCE_BASIS, `${label}.basis`);
   if (basis === "FRAME_OBSERVED" && visualReviewStatus !== "FRAMES_REVIEWED") {
     throw new Error(`${label} cannot claim frame observation without frame review`);
+  }
+  if (basis === "FRAME_OBSERVED" && !frameAudit.some((frame) => frame.dimension === technique.dimension)) {
+    throw new Error(`${label} lacks a matching reviewed frame timestamp`);
   }
   return Object.freeze({
     dimension: requiredString(technique.dimension, `${label}.dimension`),
@@ -59,8 +81,12 @@ function normalizeTechnique(technique, caseId, index, visualReviewStatus) {
 }
 
 /** Verified external examples are inspiration, never a customer Golden production baseline. */
-export function validateExternalSuccessBundle({ targetPlatforms, bundle, required = false }) {
+export function validateExternalSuccessBundle({ targetPlatforms, bundle, required = false, requireDirectVideoReview = false }) {
   if (typeof required !== "boolean") throw new Error("required must be a boolean");
+  if (typeof requireDirectVideoReview !== "boolean") throw new Error("requireDirectVideoReview must be boolean");
+  if (requireDirectVideoReview && !required) {
+    throw new Error("Direct video review requires the external success research gate");
+  }
   if (!Array.isArray(targetPlatforms) || targetPlatforms.length === 0) {
     throw new Error("targetPlatforms must be a non-empty array");
   }
@@ -90,6 +116,17 @@ export function validateExternalSuccessBundle({ targetPlatforms, bundle, require
       throw new Error(`${id} cannot be observed after the bundle review`);
     }
     const visualReviewStatus = inSet(item.visualReviewStatus, OBSERVATION, `${id}.visualReviewStatus`);
+    if (item.frameAudit != null && !Array.isArray(item.frameAudit)) {
+      throw new Error(`${id}.frameAudit must be an array`);
+    }
+    const frameAudit = Object.freeze((item.frameAudit || []).map((audit, i) =>
+      normalizeFrameAudit(audit, id, i, reviewedAt)));
+    if (visualReviewStatus === "FRAMES_REVIEWED" && frameAudit.length === 0) {
+      throw new Error(`${id} cannot claim FRAMES_REVIEWED without timestamped frameAudit`);
+    }
+    if (visualReviewStatus === "CASE_DESCRIPTION_ONLY" && frameAudit.length > 0) {
+      throw new Error(`${id} has frameAudit but is marked CASE_DESCRIPTION_ONLY`);
+    }
     if (!Array.isArray(item.metrics) || item.metrics.length === 0) {
       throw new Error(`${id} needs at least one verified performance metric`);
     }
@@ -106,9 +143,10 @@ export function validateExternalSuccessBundle({ targetPlatforms, bundle, require
       distribution: inSet(item.distribution, DISTRIBUTION, `${id}.distribution`),
       visualReviewStatus,
       contentClass: requiredString(item.contentClass, `${id}.contentClass`),
+      frameAudit,
       metrics: Object.freeze(item.metrics.map((metric, i) => normalizeMetric(metric, id, i))),
       techniques: Object.freeze(item.techniques.map((technique, i) =>
-        normalizeTechnique(technique, id, i, visualReviewStatus))),
+        normalizeTechnique(technique, id, i, visualReviewStatus, frameAudit))),
       copyingProhibited: true,
       goldenProductionMethod: false,
     });
@@ -118,6 +156,13 @@ export function validateExternalSuccessBundle({ targetPlatforms, bundle, require
     for (const platform of targets) {
       if (!normalized.some((item) => item.platform === platform)) {
         throw new Error(`Missing external success research for requested platform: ${platform}`);
+      }
+    }
+  }
+  if (requireDirectVideoReview) {
+    for (const platform of targets) {
+      if (!normalized.some((item) => item.platform === platform && item.visualReviewStatus === "FRAMES_REVIEWED")) {
+        throw new Error(`Missing directly reviewed external video for requested platform: ${platform}`);
       }
     }
   }
